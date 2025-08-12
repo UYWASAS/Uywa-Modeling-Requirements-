@@ -166,7 +166,7 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 # ==========================================
-# BLOQUE 5: FORMULARIO PRINCIPAL DE PARÁMETROS (títulos DENTRO de los cards)
+# BLOQUE 5: FORMULARIO PRINCIPAL DE PARÁMETROS (títulos DENTRO de los cards, sin cards vacíos)
 # ==========================================
 col1, col2 = st.columns([1.1, 1])
 
