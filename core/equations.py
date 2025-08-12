@@ -1,9 +1,9 @@
 import numpy as np
 from typing import Optional, Literal, Dict, Any
 
-# ------------------------
-# Helpers: conversión base
-# ------------------------
+# =========================
+# BLOQUE 1: Helpers conversión base
+# =========================
 
 def asfed_to_dm(value_asfed: float, DM_pct: float, decimals: int = 0) -> float:
     """
@@ -30,17 +30,13 @@ def dm_to_asfed(value_dm: float, DM_pct: float, decimals: int = 0) -> float:
     return round(result, decimals)
 
 # ============================================================
-# 1) AVES — MEn (kcal/kg MS)
+# BLOQUE 2: AVES — MEn (kcal/kg MS)
 # ============================================================
 
-# ----- 1.1 Cereales y subproductos -----
+# ----- 2.1 Cereales y subproductos -----
 
 def men_corn(CP, EE, NFE, decimals=0) -> float:
-    """
-    NRC. MEn (maíz) = 36.21·CP + 85.44·EE + 37.26·NFE
-    Entradas: CP, EE, NFE (g/kg MS)
-    Salida: kcal/kg MS
-    """
+    """NRC. MEn (maíz) = 36.21·CP + 85.44·EE + 37.26·NFE"""
     for v in [CP, EE, NFE]:
         if v is None:
             raise ValueError("Se requieren CP, EE y NFE en g/kg MS.")
@@ -48,9 +44,7 @@ def men_corn(CP, EE, NFE, decimals=0) -> float:
     return round(men, decimals)
 
 def men_sorghum_low_tannin(CP, EE, NFE, decimals=0) -> float:
-    """
-    NRC. Sorgo taninos <0.4%: MEn = 31.02·CP + 77.03·EE + 37.67·NFE
-    """
+    """NRC. Sorgo taninos <0.4%: MEn = 31.02·CP + 77.03·EE + 37.67·NFE"""
     for v in [CP, EE, NFE]:
         if v is None:
             raise ValueError("Se requieren CP, EE y NFE en g/kg MS.")
@@ -58,9 +52,7 @@ def men_sorghum_low_tannin(CP, EE, NFE, decimals=0) -> float:
     return round(men, decimals)
 
 def men_sorghum_high_tannin(CP, EE, NFE, decimals=0) -> float:
-    """
-    NRC. Sorgo taninos >1.0%: MEn = 21.98·CP + 54.75·EE + 35.18·NFE
-    """
+    """NRC. Sorgo taninos >1.0%: MEn = 21.98·CP + 54.75·EE + 35.18·NFE"""
     for v in [CP, EE, NFE]:
         if v is None:
             raise ValueError("Se requieren CP, EE y NFE en g/kg MS.")
@@ -68,9 +60,7 @@ def men_sorghum_high_tannin(CP, EE, NFE, decimals=0) -> float:
     return round(men, decimals)
 
 def men_wheat(CP, EE, NFE, decimals=0) -> float:
-    """
-    NRC. Trigo: MEn = 34.92·CP + 63.10·EE + 36.42·NFE
-    """
+    """NRC. Trigo: MEn = 34.92·CP + 63.10·EE + 36.42·NFE"""
     for v in [CP, EE, NFE]:
         if v is None:
             raise ValueError("Se requieren CP, EE y NFE en g/kg MS.")
@@ -78,9 +68,7 @@ def men_wheat(CP, EE, NFE, decimals=0) -> float:
     return round(men, decimals)
 
 def men_triticale(CP, EE, NFE, decimals=0) -> float:
-    """
-    NRC. Triticale: MEn = 34.49·CP + 62.16·EE + 35.61·NFE
-    """
+    """NRC. Triticale: MEn = 34.49·CP + 62.16·EE + 35.61·NFE"""
     for v in [CP, EE, NFE]:
         if v is None:
             raise ValueError("Se requieren CP, EE y NFE en g/kg MS.")
@@ -88,29 +76,21 @@ def men_triticale(CP, EE, NFE, decimals=0) -> float:
     return round(men, decimals)
 
 def men_barley(CF, Starch, decimals=0) -> float:
-    """
-    NRC. Cebada: MEn = 3078 – 90.4·CF + 9.2·Starch
-    CF y Starch en g/kg MS
-    """
+    """NRC. Cebada: MEn = 3078 – 90.4·CF + 9.2·Starch"""
     if CF is None or Starch is None:
         raise ValueError("Se requieren CF y Starch en g/kg MS.")
     men = 3078 - 90.4*CF + 9.2*Starch
     return round(men, decimals)
 
 def men_oats(CF, EE, decimals=0) -> float:
-    """
-    NRC. Avena: MEn = 2970 – 59.7·CF + 116.9·EE
-    """
+    """NRC. Avena: MEn = 2970 – 59.7·CF + 116.9·EE"""
     if CF is None or EE is None:
         raise ValueError("Se requieren CF y EE en g/kg MS.")
     men = 2970 - 59.7*CF + 116.9*EE
     return round(men, decimals)
 
 def men_rice_bran(DM_pct, Ash, CP, EE, CF, decimals=0) -> float:
-    """
-    NRC. Pulido/polvillo arroz: MEn = 46.7·DM – 46.7·Ash – 69.55·CP + 42.95·EE – 81.95·CF
-    DM_pct en %, resto en g/kg MS
-    """
+    """NRC. Pulido/polvillo arroz: MEn = 46.7·DM – 46.7·Ash – 69.55·CP + 42.95·EE – 81.95·CF"""
     for v in [DM_pct, Ash, CP, EE, CF]:
         if v is None:
             raise ValueError("Se requieren DM_pct (%), Ash, CP, EE, CF en g/kg MS.")
@@ -118,9 +98,7 @@ def men_rice_bran(DM_pct, Ash, CP, EE, CF, decimals=0) -> float:
     return round(men, decimals)
 
 def men_bakery_generic(CP, EE, NFE, decimals=0) -> float:
-    """
-    NRC. Subproducto panadero: MEn = 34.49·CP + 76.10·EE + 37.67·NFE
-    """
+    """NRC. Subproducto panadero: MEn = 34.49·CP + 76.10·EE + 37.67·NFE"""
     for v in [CP, EE, NFE]:
         if v is None:
             raise ValueError("Se requieren CP, EE y NFE en g/kg MS.")
@@ -128,9 +106,7 @@ def men_bakery_generic(CP, EE, NFE, decimals=0) -> float:
     return round(men, decimals)
 
 def tmen_bakery_alt(CF, Ash, CP, EE, decimals=0) -> float:
-    """
-    NRC. TMEn alternativa: TMEn = 4340 – 100·CF – 40·Ash – 30·CP + 10·EE
-    """
+    """NRC. TMEn alternativa: TMEn = 4340 – 100·CF – 40·Ash – 30·CP + 10·EE"""
     for v in [CF, Ash, CP, EE]:
         if v is None:
             raise ValueError("Se requieren CF, Ash, CP y EE en g/kg MS.")
@@ -138,9 +114,7 @@ def tmen_bakery_alt(CF, Ash, CP, EE, decimals=0) -> float:
     return round(tmen, decimals)
 
 def men_wheat_bran(DM_pct, Ash, CF, decimals=0) -> float:
-    """
-    NRC. Afrecho: MEn = 40.1·DM – 40.1·Ash – 165.39·CF
-    """
+    """NRC. Afrecho: MEn = 40.1·DM – 40.1·Ash – 165.39·CF"""
     for v in [DM_pct, Ash, CF]:
         if v is None:
             raise ValueError("Se requieren DM_pct (%), Ash y CF en g/kg MS.")
@@ -148,29 +122,22 @@ def men_wheat_bran(DM_pct, Ash, CF, decimals=0) -> float:
     return round(men, decimals)
 
 def men_wheat_flour(CF, decimals=0) -> float:
-    """
-    NRC. Harina de trigo: MEn = 3985 – 205·CF
-    """
+    """NRC. Harina de trigo: MEn = 3985 – 205·CF"""
     if CF is None:
         raise ValueError("Se requiere CF en g/kg MS.")
     men = 3985 - 205*CF
     return round(men, decimals)
 
 def men_wheat_flour_pelleted(CF, decimals=0) -> float:
-    """
-    NRC. Harina de trigo pellet: MEn = 3926 – 181·CF
-    """
+    """NRC. Harina de trigo pellet: MEn = 3926 – 181·CF"""
     if CF is None:
         raise ValueError("Se requiere CF en g/kg MS.")
     men = 3926 - 181*CF
     return round(men, decimals)
 
-# ----- 1.2 Subproductos industriales -----
-
+# ----- 2.2 Subproductos industriales -----
 def men_corn_wet_milling(CP, CF, EE, decimals=0) -> float:
-    """
-    NRC. Maíz molienda húmeda: MEn = 4240 – 34.4·CP – 159.6·CF + 13.5·EE
-    """
+    """NRC. Maíz molienda húmeda: MEn = 4240 – 34.4·CP – 159.6·CF + 13.5·EE"""
     for v in [CP, CF, EE]:
         if v is None:
             raise ValueError("Se requieren CP, CF y EE en g/kg MS.")
@@ -178,9 +145,7 @@ def men_corn_wet_milling(CP, CF, EE, decimals=0) -> float:
     return round(men, decimals)
 
 def men_corn_gluten_meal_65(CP, EE, NFE, decimals=0) -> float:
-    """
-    NRC. Gluten meal 65% PB: MEn = 40.94·CP + 88.17·EE + 33.13·NFE
-    """
+    """NRC. Gluten meal 65% PB: MEn = 40.94·CP + 88.17·EE + 33.13·NFE"""
     for v in [CP, EE, NFE]:
         if v is None:
             raise ValueError("Se requieren CP, EE y NFE en g/kg MS.")
@@ -188,9 +153,7 @@ def men_corn_gluten_meal_65(CP, EE, NFE, decimals=0) -> float:
     return round(men, decimals)
 
 def men_corn_gluten_meal_40(CP, EE, NFE, decimals=0) -> float:
-    """
-    NRC. Gluten meal 40% PB: MEn = 36.64·CP + 73.30·EE + 25.67·NFE
-    """
+    """NRC. Gluten meal 40% PB: MEn = 36.64·CP + 73.30·EE + 25.67·NFE"""
     for v in [CP, EE, NFE]:
         if v is None:
             raise ValueError("Se requieren CP, EE y NFE en g/kg MS.")
@@ -198,9 +161,7 @@ def men_corn_gluten_meal_40(CP, EE, NFE, decimals=0) -> float:
     return round(men, decimals)
 
 def men_corn_gluten_feed(DM_pct, Ash, CP, EE, CF, decimals=0) -> float:
-    """
-    NRC. Gluten feed 20% PB: MEn = 42.35·DM – 42.35·Ash – 23.74·CP + 28.03·EE – 165.72·CF
-    """
+    """NRC. Gluten feed 20% PB: MEn = 42.35·DM – 42.35·Ash – 23.74·CP + 28.03·EE – 165.72·CF"""
     for v in [DM_pct, Ash, CP, EE, CF]:
         if v is None:
             raise ValueError("Se requieren DM_pct (%), Ash, CP, EE y CF en g/kg MS.")
@@ -208,21 +169,16 @@ def men_corn_gluten_feed(DM_pct, Ash, CP, EE, CF, decimals=0) -> float:
     return round(men, decimals)
 
 def men_ddgs_generic(DM_pct, Ash, CP, CF, decimals=0) -> float:
-    """
-    NRC. DDGS/cervecería: MEn = 39.15·DM – 39.15·Ash – 9.72·CP – 63.81·CF
-    """
+    """NRC. DDGS/cervecería: MEn = 39.15·DM – 39.15·Ash – 9.72·CP – 63.81·CF"""
     for v in [DM_pct, Ash, CP, CF]:
         if v is None:
             raise ValueError("Se requieren DM_pct (%), Ash, CP y CF en g/kg MS.")
     men = 39.15*DM_pct - 39.15*Ash - 9.72*CP - 63.81*CF
     return round(men, decimals)
 
-# ----- 1.3 Raíces/almidones -----
-
+# ----- 2.3 Raíces/almidones -----
 def men_sweet_potato(CP, EE, NFE, decimals=0) -> float:
-    """
-    NRC. Camote deshidratado: MEn = 8.62·CP + 50.12·EE + 37.67·NFE
-    """
+    """NRC. Camote deshidratado: MEn = 8.62·CP + 50.12·EE + 37.67·NFE"""
     for v in [CP, EE, NFE]:
         if v is None:
             raise ValueError("Se requieren CP, EE y NFE en g/kg MS.")
@@ -230,9 +186,7 @@ def men_sweet_potato(CP, EE, NFE, decimals=0) -> float:
     return round(men, decimals)
 
 def men_cassava_formula1(DM_pct, Ash, CF, decimals=0) -> float:
-    """
-    NRC. Yuca/tapioca: MEn = 39.14·DM – 39.14·Ash – 82.78·CF
-    """
+    """NRC. Yuca/tapioca: MEn = 39.14·DM – 39.14·Ash – 82.78·CF"""
     for v in [DM_pct, Ash, CF]:
         if v is None:
             raise ValueError("Se requieren DM_pct (%), Ash y CF en g/kg MS.")
@@ -240,21 +194,16 @@ def men_cassava_formula1(DM_pct, Ash, CF, decimals=0) -> float:
     return round(men, decimals)
 
 def men_cassava_formula2(Ash, CF, decimals=0) -> float:
-    """
-    NRC. Yuca/tapioca: MEn = 4054 – 43.4·Ash – 103·CF
-    """
+    """NRC. Yuca/tapioca: MEn = 4054 – 43.4·Ash – 103·CF"""
     for v in [Ash, CF]:
         if v is None:
             raise ValueError("Se requieren Ash y CF en g/kg MS.")
     men = 4054 - 43.4*Ash - 103*CF
     return round(men, decimals)
 
-# ----- 1.4 Oleaginosas y harinas proteicas -----
-
+# ----- 2.4 Oleaginosas y harinas proteicas -----
 def men_cottonseed_meal(DM_pct, EE, CF, decimals=0) -> float:
-    """
-    NRC. Harina de algodón: MEn = 21.26·DM + 47.13·EE – 30.85·CF
-    """
+    """NRC. Harina de algodón: MEn = 21.26·DM + 47.13·EE – 30.85·CF"""
     for v in [DM_pct, EE, CF]:
         if v is None:
             raise ValueError("Se requieren DM_pct (%), EE y CF en g/kg MS.")
@@ -262,9 +211,7 @@ def men_cottonseed_meal(DM_pct, EE, CF, decimals=0) -> float:
     return round(men, decimals)
 
 def men_peanut_meal(DM_pct, EE, CF, decimals=0) -> float:
-    """
-    NRC. Harina de maní: MEn = 29.68·DM + 60.95·EE – 60.87·CF
-    """
+    """NRC. Harina de maní: MEn = 29.68·DM + 60.95·EE – 60.87·CF"""
     for v in [DM_pct, EE, CF]:
         if v is None:
             raise ValueError("Se requieren DM_pct (%), EE y CF en g/kg MS.")
@@ -272,9 +219,7 @@ def men_peanut_meal(DM_pct, EE, CF, decimals=0) -> float:
     return round(men, decimals)
 
 def men_canola_high_glucosinolate(CP, EE, NFE, decimals=0) -> float:
-    """
-    NRC. Canola alto glucosinolate: MEn = 29.73·CP + 46.39·EE + 7.87·NFE
-    """
+    """NRC. Canola alto glucosinolate: MEn = 29.73·CP + 46.39·EE + 7.87·NFE"""
     for v in [CP, EE, NFE]:
         if v is None:
             raise ValueError("Se requieren CP, EE y NFE en g/kg MS.")
@@ -282,9 +227,7 @@ def men_canola_high_glucosinolate(CP, EE, NFE, decimals=0) -> float:
     return round(men, decimals)
 
 def men_canola_double_zero(CP, EE, NFE, decimals=0) -> float:
-    """
-    NRC. Canola doble cero: MEn = 32.76·CP + 64.96·EE + 13.24·NFE
-    """
+    """NRC. Canola doble cero: MEn = 32.76·CP + 64.96·EE + 13.24·NFE"""
     for v in [CP, EE, NFE]:
         if v is None:
             raise ValueError("Se requieren CP, EE y NFE en g/kg MS.")
@@ -292,21 +235,16 @@ def men_canola_double_zero(CP, EE, NFE, decimals=0) -> float:
     return round(men, decimals)
 
 def men_soybean_meal_expeller(CP, EE, NFE, decimals=0) -> float:
-    """
-    NRC. Soya expeller: MEn = 37.50·CP + 70.52·EE + 14.90·NFE
-    """
+    """NRC. Soya expeller: MEn = 37.50·CP + 70.52·EE + 14.90·NFE"""
     for v in [CP, EE, NFE]:
         if v is None:
             raise ValueError("Se requieren CP, EE y NFE en g/kg MS.")
     men = 37.50*CP + 70.52*EE + 14.90*NFE
     return round(men, decimals)
 
-# ----- 1.5 Origen animal -----
-
+# ----- 2.5 Origen animal -----
 def men_skim_milk_powder(CP, EE, NFE, decimals=0) -> float:
-    """
-    NRC. Leche descremada polvo: MEn = 40.94·CP + 77.96·EE + 19.04·NFE
-    """
+    """NRC. Leche descremada polvo: MEn = 40.94·CP + 77.96·EE + 19.04·NFE"""
     for v in [CP, EE, NFE]:
         if v is None:
             raise ValueError("Se requieren CP, EE y NFE en g/kg MS.")
@@ -314,9 +252,7 @@ def men_skim_milk_powder(CP, EE, NFE, decimals=0) -> float:
     return round(men, decimals)
 
 def men_blood_meal_spray(CP, EE, decimals=0) -> float:
-    """
-    NRC. Harina de sangre (spray): MEn = 34.49·CP + 64.96·EE
-    """
+    """NRC. Harina de sangre (spray): MEn = 34.49·CP + 64.96·EE"""
     for v in [CP, EE]:
         if v is None:
             raise ValueError("Se requieren CP y EE en g/kg MS.")
@@ -324,9 +260,7 @@ def men_blood_meal_spray(CP, EE, decimals=0) -> float:
     return round(men, decimals)
 
 def men_blood_meal_drum(CP, EE, decimals=0) -> float:
-    """
-    NRC. Harina de sangre (drum): MEn = 31.88·CP + 60.32·EE
-    """
+    """NRC. Harina de sangre (drum): MEn = 31.88·CP + 60.32·EE"""
     for v in [CP, EE]:
         if v is None:
             raise ValueError("Se requieren CP y EE en g/kg MS.")
@@ -334,9 +268,7 @@ def men_blood_meal_drum(CP, EE, decimals=0) -> float:
     return round(men, decimals)
 
 def men_feather_meal(CP, EE, decimals=0) -> float:
-    """
-    NRC. Harina de pluma (pepsina dig. ≥80%): MEn = 33.20·CP + 57.53·EE
-    """
+    """NRC. Harina de pluma (pepsina dig. ≥80%): MEn = 33.20·CP + 57.53·EE"""
     for v in [CP, EE]:
         if v is None:
             raise ValueError("Se requieren CP y EE en g/kg MS.")
@@ -357,17 +289,14 @@ def men_poultry_by_product_meal(CP, EE, high_fat=False, decimals=0) -> float:
     return round(men, decimals)
 
 def men_meat_and_bone_meal(DM_pct, Ash, EE, decimals=0) -> float:
-    """
-    NRC. Harina de carne y hueso: MEn = 35.87·DM – 34.08·Ash + 42.09·EE
-    """
+    """NRC. Harina de carne y hueso: MEn = 35.87·DM – 34.08·Ash + 42.09·EE"""
     for v in [DM_pct, Ash, EE]:
         if v is None:
             raise ValueError("Se requieren DM_pct (%), Ash y EE en g/kg MS.")
     men = 35.87*DM_pct - 34.08*Ash + 42.09*EE
     return round(men, decimals)
 
-# ----- 1.6 Grasas y aceites -----
-
+# ----- 2.6 Grasas y aceites -----
 def men_fat_by_IV_and_saturates(IV, C16_0, C18_0, decimals=0) -> float:
     """
     NRC. Grasas/aceites: MEn = 20041 – 23.0·IV – 319.1·C16:0 – 153.4·C18:0
@@ -391,10 +320,8 @@ def men_fat_by_US_ratio(US_ratio, decimals=0) -> float:
     men = 8227 - 10318 * (-1.1685 * US_ratio)
     return round(men, decimals)
 
-# TODO: Añadir más variantes si hay datos de oleico+linoleico.
-
 # ============================================================
-# 2) CERDOS — ME y NE (kcal/kg MS)
+# BLOQUE 3: CERDOS — ME y NE (kcal/kg MS)
 # ============================================================
 
 def me_from_de_and_cp(DE, CP, decimals=0) -> float:
@@ -468,7 +395,7 @@ def ne_from_functional_digestibles(DCP, DEEh, Starcham, Suge, FCH, decimals=0) -
     return round(ne, decimals)
 
 # ============================================================
-# Wrapper universal
+# BLOQUE 4: Wrapper universal compute_energy
 # ============================================================
 
 def compute_energy(
@@ -485,17 +412,23 @@ def compute_energy(
       {'value': float, 'basis': 'DM'|'as-fed', 'equation': str, 'notes': list[str]}
     Internamente usa la función y método adecuado.
     """
-    # Este árbol debe ser sincronizado con core/selector.py
     notes = []
     if species == "poultry":
-        # Ejemplo para maíz:
+        # Ejemplo para maíz NRC
         if family.lower() == "cereales y subproductos" and (method is None or method == "men_corn"):
             for v in ["CP", "EE", "NFE"]:
                 if v not in inputs:
                     raise ValueError(f"Falta la variable {v} (g/kg MS) para maíz NRC.")
             val = men_corn(inputs["CP"], inputs["EE"], inputs["NFE"], decimals=decimals)
             equation = "men_corn"
-        # Agrega aquí más familias y variantes
+        # Ejemplo para cebada NRC (Ecuación B)
+        elif method == "men_barley":
+            for v in ["CF", "Starch"]:
+                if v not in inputs:
+                    raise ValueError(f"Falta la variable {v} (g/kg MS) para cebada NRC.")
+            val = men_barley(inputs["CF"], inputs["Starch"], decimals=decimals)
+            equation = "men_barley"
+        # Añade aquí más elif para soportar otros métodos
         else:
             raise ValueError("La familia/método no está soportada aún.")
     elif species == "swine":
@@ -506,10 +439,12 @@ def compute_energy(
         elif method == "me_from_de_and_cp" or (method is None and all(x in inputs for x in ["DE", "CP"])):
             val = me_from_de_and_cp(inputs["DE"], inputs["CP"], decimals=decimals)
             equation = "me_from_de_and_cp"
+        # Añade más elif para otros métodos de cerdos
         else:
             raise ValueError("No hay método adecuado ni suficientes variables para cerdos.")
     else:
         raise ValueError("Especie no soportada.")
+
     # conversión as-fed
     value_out = val
     basis = "DM"
@@ -524,3 +459,7 @@ def compute_energy(
         equation=equation,
         notes=notes
     )
+
+# =========================
+# FIN DE ARCHIVO
+# =========================
