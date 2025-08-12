@@ -361,24 +361,50 @@ with tabs[1]:
         eq_choice = select_equation(especie_mp, familia, comp_edit)
         st.info(f"Ecuación seleccionada automáticamente: {eq_choice}")
 
-    # ------ BLOQUE 2.4: Cálculo energético (stub) ------
-    st.subheader("Resultado energético estimado")
-    energia, ecuacion_usada, variables_usadas, advertencias = estimate_energy_stub(
-        especie=especie_mp,
-        familia=familia,
-        materia_prima=materia_prima,
-        comp=comp_edit,
-        unidad_base=unidad_base_mp,
-        unidad_energia=unidad_energia_mp,
-        eq_choice=eq_choice
+    # ========================
+# BLOQUE 2.4: Cálculo energético (usar compute_energy)
+# ========================
+st.subheader("Resultado energético estimado")
+
+# --- Recopilación de inputs en dict para compute_energy ---
+inputs_dict = {}
+for col in comp_edit.columns:
+    try:
+        val = float(comp_edit.iloc[0][col])
+    except Exception:
+        val = None
+    inputs_dict[col] = val
+
+# Determinar método (ecuación) compatible para compute_energy
+method_name = None
+if eq_mode == "Manual":
+    # El nombre de la función a usar debe estar mapeado correctamente
+    # Si en tu selector agregas el nombre de la función, úsalo.
+    # Ejemplo: "men_corn" o "me_noblet_perez"
+    # Aquí solo a modo de ejemplo, usar el texto del selectbox, pero ajusta a tu selector real
+    method_name = eq_choice.split()[0] if isinstance(eq_choice, str) else None
+
+try:
+    result = compute_energy(
+        species="poultry" if especie_mp == "Aves" else "swine",
+        family=familia,
+        method=method_name,
+        inputs=inputs_dict,
+        return_asfed=(unidad_base_mp == "as-fed"),
+        DM_pct=inputs_dict.get("DM", None),
+        decimals=0
     )
-
+    energia = result["value"]
+    ecuacion_usada = result["equation"]
+    variables_usadas = list(inputs_dict.keys())
+    advertencias = result.get("notes", [])
     st.metric(label="Energía estimada", value=f"{energia:.1f} {unidad_energia_mp}")
-
     st.caption(f"Ecuación usada: {ecuacion_usada}")
     st.caption(f"Variables usadas: {variables_usadas}")
     if advertencias:
         st.warning(" | ".join(advertencias))
+except Exception as e:
+    st.error(f"Error en el cálculo energético: {e}")
 
     # ------ BLOQUE 2.5: Ajuste a dieta y escalado de nutrientes ------
     st.subheader("Ajuste a dieta y escalado de nutrientes")
