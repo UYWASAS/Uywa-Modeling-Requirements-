@@ -40,7 +40,7 @@ st.markdown("""
 # BLOQUE 2: SIDEBAR - LOGO Y ENTRADAS GLOBALES
 # ==========================================
 st.sidebar.image("assets/logo_empresa.png", use_column_width=True)
-st.sidebar.title("NutriEnergia 🐷🐔")
+st.sidebar.title("NutriEnergia")
 st.sidebar.markdown("Modelador de requerimientos energéticos y dietarios\nDesarrollado por Uywa")
 
 especie = st.sidebar.selectbox("Especie", ["Porcinos", "Aves"])
