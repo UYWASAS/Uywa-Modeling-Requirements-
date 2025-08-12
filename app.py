@@ -68,7 +68,6 @@ st.markdown("""
         color: #fff !important;
         font-family: 'Montserrat', sans-serif !important;
     }
-    /* Cards y boxes principales */
     .card-box {
         background: #fff !important;
         border-radius: 16px !important;
@@ -76,6 +75,17 @@ st.markdown("""
         border: 1.5px solid #dde7f7 !important;
         padding: 24px 28px 18px 28px !important;
         margin-bottom: 28px !important;
+    }
+    .card-box, .card-box * {
+        color: #19345c !important;
+        font-family: 'Montserrat', sans-serif !important;
+    }
+    .card-box input, .card-box select, .card-box textarea {
+        color: #19345c !important;
+        font-family: 'Montserrat', sans-serif !important;
+        background: #f8fbfd !important;
+        border-radius: 7px !important;
+        border: 1px solid #dde7f7 !important;
     }
     .main-title, h1, h2, h3, h4, h5, h6 {
         font-family: 'Montserrat', sans-serif !important;
@@ -102,6 +112,7 @@ st.markdown("""
         margin: 4px;
         font-family: 'Montserrat', sans-serif !important;
         border: 1px solid #dde7f7 !important;
+        color: #19345c !important;
     }
     .stDataFrame thead tr th { font-family: 'Montserrat', sans-serif !important; color: #19345c !important;}
     .stDataFrame tbody tr td { font-family: 'Montserrat', sans-serif !important;}
