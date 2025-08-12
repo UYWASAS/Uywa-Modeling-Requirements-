@@ -375,12 +375,22 @@ for col in comp_edit.columns:
         val = None
     inputs_dict[col] = val
 
+# Calcular NFE si falta y hay datos suficientes
+if "NFE" not in inputs_dict or inputs_dict["NFE"] is None:
+    required = ["Ash", "CP", "EE", "CF"]
+    if all(inputs_dict.get(x) is not None for x in required):
+        inputs_dict["NFE"] = 1000 - (
+            inputs_dict.get("Ash", 0)
+            + inputs_dict.get("CP", 0)
+            + inputs_dict.get("EE", 0)
+            + inputs_dict.get("CF", 0)
+        )
+
 # Determinar el nombre de la función/metodología si corresponde
 method_name = None
 if eq_mode == "Manual":
     # Si eq_choice es el nombre de la función real (ej: "men_corn") úsalo;
     # si es solo una descripción amigable, deberás mapearlo a la función real aquí.
-    # Aquí dejamos un ejemplo genérico:
     method_name = eq_choice.split()[0] if isinstance(eq_choice, str) else None
 
 try:
@@ -404,7 +414,7 @@ try:
         st.warning(" | ".join(advertencias))
 except Exception as e:
     st.error(f"Error en el cálculo energético: {e}")
-
+    
     # ------ BLOQUE 2.5: Ajuste a dieta y escalado de nutrientes ------
     st.subheader("Ajuste a dieta y escalado de nutrientes")
     FI_mp = st.number_input("Consumo diario orientativo (kg/d)", min_value=0.01, value=1.0, key="fi_mp")
