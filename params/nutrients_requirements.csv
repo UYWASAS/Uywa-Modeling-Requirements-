@@ -1,0 +1,9 @@
+especie,etapa,referencia_AME_kcalkg,nutriente,unidad,valor_por_kg,escalable,min_absoluto,max
+broiler,engorde,3000,PB,g,220,True,180,240
+broiler,engorde,3000,Lys_SID,g,12.5,True,10.0,14.0
+broiler,engorde,3000,Ca,g,9.0,False,8.0,12.0
+broiler,engorde,3000,P,g,4.5,False,4.0,6.0
+ponedora,postura,2800,PB,g,170,True,150,200
+ponedora,postura,2800,Lys_SID,g,8.0,True,6.0,10.0
+ponedora,postura,2800,Ca,g,40.0,False,35.0,45.0
+ponedora,postura,2800,P,g,4.5,False,4.0,6.0
