@@ -19,11 +19,8 @@ def login():
     st.markdown(
         """
         <div style='display:flex;align-items:center;justify-content:center;margin-bottom:24px;'>
-            <img src="assets/logo_empresa.png" width="85" style="margin-right:20px;"/>
-            <div>
-                <span style="font-size:2.2em;font-family:'Montserrat',sans-serif;font-weight:700;color:#19345c;">NutriEnergia</span><br>
-                <span style="font-size:1.1em;color:#19345c;font-family:'Montserrat',sans-serif;">Plataforma de modelado nutricional</span>
-            </div>
+            <span style="font-size:2.2em;font-family:'Montserrat',sans-serif;font-weight:700;color:#19345c;">NutriEnergia</span><br>
+            <span style="font-size:1.1em;color:#19345c;font-family:'Montserrat',sans-serif;">Plataforma de modelado nutricional</span>
         </div>
         """,
         unsafe_allow_html=True
@@ -151,29 +148,31 @@ with st.sidebar:
     )
 
 # ==========================================
-# BLOQUE 4: HEADER SIN EMOJIS NI ICONOS INFORMALES
+# BLOQUE 4: HEADER (SOLO TÍTULO, SUBTÍTULO Y USUARIO, SIN IMAGEN NI ICONO)
 # ==========================================
-st.markdown(f"<div style='text-align:right'>Usuario: <b>{st.session_state['usuario']}</b></div>", unsafe_allow_html=True)
-
-st.markdown("""
-    <div style="display:flex;align-items:center;margin-bottom:8px;">
-        <img src="assets/logo_empresa.png" width="50" style="margin-right: 18px"/>
-        <div>
-            <span class="main-title">Modelador de Requerimientos Energéticos y Dietarios</span><br>
-            <span class="subtitle">Calcula energía total, densidad energética y tabla de nutrientes ajustada por etapa y especie.</span>
-        </div>
+st.markdown(f"""
+<div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+  <div>
+    <div class="main-title" style="margin-bottom:0.25em; font-size:1.35em;">
+      Modelador de Requerimientos Energéticos y Dietarios
     </div>
-    """, unsafe_allow_html=True)
-st.markdown('<hr>', unsafe_allow_html=True)
+    <div class="subtitle" style="font-size:1.05em;">
+      Calcula energía total, densidad energética y tabla de nutrientes ajustada por etapa y especie.
+    </div>
+  </div>
+  <div style="font-size:1em; color:#233a61;">Usuario: <b>{st.session_state['usuario']}</b></div>
+</div>
+<hr style="border-top:2px solid #dde7f7; margin: 18px 0 20px 0;">
+""", unsafe_allow_html=True)
 
 # ==========================================
-# BLOQUE 5: FORMULARIO PRINCIPAL DE PARÁMETROS (cards por especie/etapa)
+# BLOQUE 5: FORMULARIO PRINCIPAL DE PARÁMETROS (títulos FUERA de los cards)
 # ==========================================
 col1, col2 = st.columns([1.1, 1])
 
 with col1:
+    st.markdown('<div class="main-title" style="font-size:1.18em; margin-bottom:0.35em;">1. Seleccione especie y etapa</div>', unsafe_allow_html=True)
     st.markdown('<div class="card-box">', unsafe_allow_html=True)
-    st.subheader("1. Seleccione especie y etapa")
     especie = st.selectbox("Especie", ["Porcinos", "Aves"], key="especie_main")
     if especie == "Porcinos":
         etapa = st.selectbox("Categoría", ["Crecimiento/Cebo", "Gestación", "Lactación"], key="etapa_porcino")
@@ -184,8 +183,8 @@ with col1:
     st.markdown('</div>', unsafe_allow_html=True)
 
 with col2:
+    st.markdown('<div class="main-title" style="font-size:1.18em; margin-bottom:0.35em;">2. Configuración general</div>', unsafe_allow_html=True)
     st.markdown('<div class="card-box">', unsafe_allow_html=True)
-    st.subheader("2. Configuración general")
     unidad_energia = st.radio("Unidad de energía", ["kcal", "kJ", "MJ"], horizontal=True, key="unidad_energia_main")
     archivo_req = st.selectbox("Archivo de requerimientos", ["params/nutrients_requirements.csv"], key="archivo_req_main")
     st.info("Todos los coeficientes y reglas son editables desde la carpeta `params/`.\nFuente: NRC/FEDNA/empresa.")
@@ -194,7 +193,7 @@ with col2:
 st.markdown('<hr>', unsafe_allow_html=True)
 
 # ==========================================
-# BLOQUE 6: ENTRADA DE PARÁMETROS ESPECÍFICOS EN CARDS
+# BLOQUE 6: ENTRADA DE PARÁMETROS ESPECÍFICOS (título FUERA del card)
 # ==========================================
 ME_total_disp = None
 AME_requerida_disp = None
@@ -204,8 +203,8 @@ csv_out = None
 
 with st.container():
     if especie == "Porcinos" and etapa == "Crecimiento/Cebo":
+        st.markdown('<div class="main-title" style="font-size:1.12em; margin-bottom:0.3em;">Parámetros productivos - Crecimiento/Cebo</div>', unsafe_allow_html=True)
         st.markdown('<div class="card-box">', unsafe_allow_html=True)
-        st.subheader("Parámetros productivos - Crecimiento/Cebo")
         pig_grow_df = pd.read_csv("params/pig_grow.csv")
         nutrients_df = pd.read_csv(archivo_req)
         categoria = st.selectbox("Sexo/edad", pig_grow_df["categoria"].unique(), key="categoria_porcino")
@@ -232,8 +231,8 @@ with st.container():
         csv_out = scaled_nutr.to_csv(index=False).encode()
 
     elif especie == "Aves" and etapa == "Broiler":
+        st.markdown('<div class="main-title" style="font-size:1.12em; margin-bottom:0.3em;">Parámetros productivos - Broiler</div>', unsafe_allow_html=True)
         st.markdown('<div class="card-box">', unsafe_allow_html=True)
-        st.subheader("Parámetros productivos - Broiler")
         broiler_params_df = pd.read_csv("params/broiler.csv")
         nutrients_df = pd.read_csv(archivo_req)
         genetica = st.selectbox("Genética", broiler_params_df["genetica"].unique(), key="genetica_broiler")
@@ -259,11 +258,11 @@ with st.container():
 st.markdown('<hr>', unsafe_allow_html=True)
 
 # ==========================================
-# BLOQUE 7: CARDS DE RESULTADOS
+# BLOQUE 7: CARDS DE RESULTADOS (título FUERA del card)
 # ==========================================
 if ME_total_disp is not None and AME_requerida_disp is not None and FI is not None:
+    st.markdown('<div class="main-title" style="font-size:1.12em; margin-bottom:0.3em;">Resultados principales</div>', unsafe_allow_html=True)
     st.markdown('<div class="card-box">', unsafe_allow_html=True)
-    st.subheader("Resultados principales")
     col1, col2, col3 = st.columns(3)
     col1.metric(label="Energía total requerida", value=f"{ME_total_disp:.1f} {unidad_energia}/día")
     col2.metric(label="Densidad energética requerida", value=f"{AME_requerida_disp:.0f} {unidad_energia}/kg")
@@ -274,8 +273,8 @@ if ME_total_disp is not None and AME_requerida_disp is not None and FI is not No
     # BLOQUE 8: TABLA DE NUTRIENTES ESCALADOS
     # ==========================================
     if scaled_nutr is not None:
+        st.markdown('<div class="main-title" style="font-size:1.12em; margin-bottom:0.3em;">Nutrientes escalados por kg de dieta</div>', unsafe_allow_html=True)
         st.markdown('<div class="card-box">', unsafe_allow_html=True)
-        st.subheader("Nutrientes escalados por kg de dieta")
         st.dataframe(scaled_nutr[["nutriente", "valor_por_kg", "unidad"]], use_container_width=True)
         st.download_button("Descargar CSV", data=csv_out, file_name="nutrientes_escalados.csv")
         st.markdown('</div>', unsafe_allow_html=True)
