@@ -166,13 +166,13 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 # ==========================================
-# BLOQUE 5: FORMULARIO PRINCIPAL DE PARÁMETROS (títulos FUERA de los cards)
+# BLOQUE 5: FORMULARIO PRINCIPAL DE PARÁMETROS (títulos DENTRO de los cards)
 # ==========================================
 col1, col2 = st.columns([1.1, 1])
 
 with col1:
-    st.markdown('<div class="main-title" style="font-size:1.18em; margin-bottom:0.35em;">1. Seleccione especie y etapa</div>', unsafe_allow_html=True)
     st.markdown('<div class="card-box">', unsafe_allow_html=True)
+    st.markdown('<div class="main-title" style="font-size:1.18em; margin-bottom:0.35em;">1. Seleccione especie y etapa</div>', unsafe_allow_html=True)
     especie = st.selectbox("Especie", ["Porcinos", "Aves"], key="especie_main")
     if especie == "Porcinos":
         etapa = st.selectbox("Categoría", ["Crecimiento/Cebo", "Gestación", "Lactación"], key="etapa_porcino")
@@ -183,8 +183,8 @@ with col1:
     st.markdown('</div>', unsafe_allow_html=True)
 
 with col2:
-    st.markdown('<div class="main-title" style="font-size:1.18em; margin-bottom:0.35em;">2. Configuración general</div>', unsafe_allow_html=True)
     st.markdown('<div class="card-box">', unsafe_allow_html=True)
+    st.markdown('<div class="main-title" style="font-size:1.18em; margin-bottom:0.35em;">2. Configuración general</div>', unsafe_allow_html=True)
     unidad_energia = st.radio("Unidad de energía", ["kcal", "kJ", "MJ"], horizontal=True, key="unidad_energia_main")
     archivo_req = st.selectbox("Archivo de requerimientos", ["params/nutrients_requirements.csv"], key="archivo_req_main")
     st.info("Todos los coeficientes y reglas son editables desde la carpeta `params/`.\nFuente: NRC/FEDNA/empresa.")
@@ -193,7 +193,7 @@ with col2:
 st.markdown('<hr>', unsafe_allow_html=True)
 
 # ==========================================
-# BLOQUE 6: ENTRADA DE PARÁMETROS ESPECÍFICOS (título FUERA del card)
+# BLOQUE 6: ENTRADA DE PARÁMETROS ESPECÍFICOS (título DENTRO del card)
 # ==========================================
 ME_total_disp = None
 AME_requerida_disp = None
@@ -203,8 +203,8 @@ csv_out = None
 
 with st.container():
     if especie == "Porcinos" and etapa == "Crecimiento/Cebo":
-        st.markdown('<div class="main-title" style="font-size:1.12em; margin-bottom:0.3em;">Parámetros productivos - Crecimiento/Cebo</div>', unsafe_allow_html=True)
         st.markdown('<div class="card-box">', unsafe_allow_html=True)
+        st.markdown('<div class="main-title" style="font-size:1.12em; margin-bottom:0.3em;">Parámetros productivos - Crecimiento/Cebo</div>', unsafe_allow_html=True)
         pig_grow_df = pd.read_csv("params/pig_grow.csv")
         nutrients_df = pd.read_csv(archivo_req)
         categoria = st.selectbox("Sexo/edad", pig_grow_df["categoria"].unique(), key="categoria_porcino")
@@ -231,8 +231,8 @@ with st.container():
         csv_out = scaled_nutr.to_csv(index=False).encode()
 
     elif especie == "Aves" and etapa == "Broiler":
-        st.markdown('<div class="main-title" style="font-size:1.12em; margin-bottom:0.3em;">Parámetros productivos - Broiler</div>', unsafe_allow_html=True)
         st.markdown('<div class="card-box">', unsafe_allow_html=True)
+        st.markdown('<div class="main-title" style="font-size:1.12em; margin-bottom:0.3em;">Parámetros productivos - Broiler</div>', unsafe_allow_html=True)
         broiler_params_df = pd.read_csv("params/broiler.csv")
         nutrients_df = pd.read_csv(archivo_req)
         genetica = st.selectbox("Genética", broiler_params_df["genetica"].unique(), key="genetica_broiler")
@@ -242,27 +242,15 @@ with st.container():
         FI = st.number_input("Ingesta diaria (kg/d)", min_value=0.01, value=0.11, key="fi_broiler")
         st.markdown('</div>', unsafe_allow_html=True)
         # Placeholder lógica, implementar modelo real
-        # params = broiler_params_df[broiler_params_df["genetica"] == genetica].iloc[0].to_dict()
-        # energy_model = BroilerEnergy(params, unidad_energia)
-        # ME_total = energy_model.me_total(W, ADG, T_amb)
-        # ME_total_disp = energy_unit_convert(ME_total, "kcal", unidad_energia)
-        # if FI > 0:
-        #     AME_requerida = ME_total / FI
-        # else:
-        #     AME_requerida = 3000
-        # AME_requerida_disp = energy_unit_convert(AME_requerida, "kcal", unidad_energia)
-        # nutr_stage = nutrients_df[(nutrients_df["especie"] == "broiler") & (nutrients_df["etapa"] == "engorde")]
-        # scaled_nutr = scale_nutrients(nutr_stage, AME_requerida)
-        # csv_out = scaled_nutr.to_csv(index=False).encode()
 
 st.markdown('<hr>', unsafe_allow_html=True)
 
 # ==========================================
-# BLOQUE 7: CARDS DE RESULTADOS (título FUERA del card)
+# BLOQUE 7: CARDS DE RESULTADOS (título DENTRO del card)
 # ==========================================
 if ME_total_disp is not None and AME_requerida_disp is not None and FI is not None:
-    st.markdown('<div class="main-title" style="font-size:1.12em; margin-bottom:0.3em;">Resultados principales</div>', unsafe_allow_html=True)
     st.markdown('<div class="card-box">', unsafe_allow_html=True)
+    st.markdown('<div class="main-title" style="font-size:1.12em; margin-bottom:0.3em;">Resultados principales</div>', unsafe_allow_html=True)
     col1, col2, col3 = st.columns(3)
     col1.metric(label="Energía total requerida", value=f"{ME_total_disp:.1f} {unidad_energia}/día")
     col2.metric(label="Densidad energética requerida", value=f"{AME_requerida_disp:.0f} {unidad_energia}/kg")
@@ -273,8 +261,8 @@ if ME_total_disp is not None and AME_requerida_disp is not None and FI is not No
     # BLOQUE 8: TABLA DE NUTRIENTES ESCALADOS
     # ==========================================
     if scaled_nutr is not None:
-        st.markdown('<div class="main-title" style="font-size:1.12em; margin-bottom:0.3em;">Nutrientes escalados por kg de dieta</div>', unsafe_allow_html=True)
         st.markdown('<div class="card-box">', unsafe_allow_html=True)
+        st.markdown('<div class="main-title" style="font-size:1.12em; margin-bottom:0.3em;">Nutrientes escalados por kg de dieta</div>', unsafe_allow_html=True)
         st.dataframe(scaled_nutr[["nutriente", "valor_por_kg", "unidad"]], use_container_width=True)
         st.download_button("Descargar CSV", data=csv_out, file_name="nutrientes_escalados.csv")
         st.markdown('</div>', unsafe_allow_html=True)
