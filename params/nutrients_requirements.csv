@@ -1,99 +1,90 @@
 especie,etapa,referencia_AME_kcalkg,nutriente,unidad,valor_por_kg,escalable,min_absoluto,max
-broiler,engorde,3000,PB,g,220,True,180,240
-broiler,engorde,3000,Lys_SID,g,12.5,True,10.0,14.0
-broiler,engorde,3000,Ca,g,9.0,False,8.0,12.0
-broiler,engorde,3000,P,g,4.5,False,4.0,6.0
-ponedora,postura,2800,PB,g,170,True,150,200
-ponedora,postura,2800,Lys_SID,g,8.0,True,6.0,10.0
-ponedora,postura,2800,Ca,g,40.0,False,35.0,45.0
-ponedora,postura,2800,P,g,4.5,False,4.0,6.0
+porcino,20-60,3180,EM porcino,kcal/kg,3180,False,,
+porcino,20-60,3180,EN porcino,kcal/kg,2400,False,,
+porcino,20-60,3180,Extracto etéreo,%,6,False,4,8
+porcino,20-60,3180,Fibra bruta,%,4.4,False,3.4,5.4
+porcino,20-60,3180,FND,%,13.25,False,11,15.5
+porcino,20-60,3180,Almidón,%,35,False,35,35
+porcino,20-60,3180,Proteína bruta,%,17.1,True,16.2,18.0
+porcino,20-60,3180,Lys total,%,1.04,True,1.04,1.04
+porcino,20-60,3180,Met total,%,0.32,True,0.32,0.32
+porcino,20-60,3180,Met + cys total,%,0.62,True,0.62,0.62
+porcino,20-60,3180,Thr total,%,0.68,True,0.68,0.68
+porcino,20-60,3180,Trp total,%,0.20,True,0.20,0.20
+porcino,20-60,3180,Val total,%,0.71,True,0.71,0.71
+porcino,20-60,3180,Ile total,%,0.57,True,0.57,0.57
+porcino,20-60,3180,Lys digest. std.,%,0.89,True,0.89,0.89
+porcino,20-60,3180,Met digest. std.,%,0.28,True,0.28,0.28
+porcino,20-60,3180,Met + cys digest. std.,%,0.53,True,0.53,0.53
+porcino,20-60,3180,Thr digest. std.,%,0.58,True,0.58,0.58
+porcino,20-60,3180,Trp digest. std.,%,0.17,True,0.17,0.17
+porcino,20-60,3180,Val digest. std.,%,0.60,True,0.60,0.60
+porcino,20-60,3180,Ile digest. std.,%,0.49,True,0.49,0.49
+porcino,20-60,3180,Calcio,%,0.74,False,0.67,0.80
+porcino,20-60,3180,Fósforo total,%,0.55,False,0.55,0.55
+porcino,20-60,3180,Fósforo digest. mín.,%,0.28,False,0.28,0.28
+porcino,20-60,3180,Magnesio,ppm,400,False,400,400
+porcino,20-60,3180,Sodio,%,0.18,False,0.18,0.18
+porcino,20-60,3180,Cloro,%,0.15,False,0.15,0.15
+porcino,20-60,3180,Potasio,%,0.655,False,0.26,1.05
+porcino,20-60,3180,Ácido linoleico,%,0.10,False,0.10,0.10
 
-porcino,20-60,EM porcino,kcal/kg,3180,3180
-porcino,20-60,EN porcino,kcal/kg,2400,2400
-porcino,20-60,Extracto etéreo,%,4,8
-porcino,20-60,Fibra bruta,%,3.4,5.4
-porcino,20-60,FND,%,11,15.5
-porcino,20-60,Almidón,%,35,35
-porcino,20-60,Proteína bruta,%,16.2,18.0
-porcino,20-60,Lys total,%,1.04,1.04
-porcino,20-60,Met total,%,0.32,0.32
-porcino,20-60,Met + cys total,%,0.62,0.62
-porcino,20-60,Thr total,%,0.68,0.68
-porcino,20-60,Trp total,%,0.20,0.20
-porcino,20-60,Val total,%,0.71,0.71
-porcino,20-60,Ile total,%,0.57,0.57
-porcino,20-60,Lys digest. std.,%,0.89,0.89
-porcino,20-60,Met digest. std.,%,0.28,0.28
-porcino,20-60,Met + cys digest. std.,%,0.53,0.53
-porcino,20-60,Thr digest. std.,%,0.58,0.58
-porcino,20-60,Trp digest. std.,%,0.17,0.17
-porcino,20-60,Val digest. std.,%,0.60,0.60
-porcino,20-60,Ile digest. std.,%,0.49,0.49
-porcino,20-60,Calcio,%,0.67,0.80
-porcino,20-60,Fósforo total,%,0.55,0.55
-porcino,20-60,Fósforo digest. mín.,%,0.28,0.28
-porcino,20-60,Magnesio,ppm,400,400
-porcino,20-60,Sodio,%,0.18,0.18
-porcino,20-60,Cloro,%,0.15,0.15
-porcino,20-60,Potasio,%,0.26,1.05
-porcino,20-60,Ácido linoleico,%,0.10,0.10
+porcino,60-100,3175,EM porcino,kcal/kg,3175,False,,
+porcino,60-100,3175,EN porcino,kcal/kg,2400,False,,
+porcino,60-100,3175,Extracto etéreo,%,6,False,4,8
+porcino,60-100,3175,Fibra bruta,%,4.9,False,3.5,6.3
+porcino,60-100,3175,FND,%,13.25,False,11,15.5
+porcino,60-100,3175,Almidón,%,35,False,35,35
+porcino,60-100,3175,Proteína bruta,%,15.9,True,14.8,17.0
+porcino,60-100,3175,Lys total,%,0.90,True,0.90,0.90
+porcino,60-100,3175,Met total,%,0.28,True,0.28,0.28
+porcino,60-100,3175,Met + cys total,%,0.54,True,0.54,0.54
+porcino,60-100,3175,Thr total,%,0.58,True,0.58,0.58
+porcino,60-100,3175,Trp total,%,0.17,True,0.17,0.17
+porcino,60-100,3175,Val total,%,0.61,True,0.61,0.61
+porcino,60-100,3175,Ile total,%,0.49,True,0.49,0.49
+porcino,60-100,3175,Lys digest. std.,%,0.77,True,0.77,0.77
+porcino,60-100,3175,Met digest. std.,%,0.24,True,0.24,0.24
+porcino,60-100,3175,Met + cys digest. std.,%,0.46,True,0.46,0.46
+porcino,60-100,3175,Thr digest. std.,%,0.50,True,0.50,0.50
+porcino,60-100,3175,Trp digest. std.,%,0.15,True,0.15,0.15
+porcino,60-100,3175,Val digest. std.,%,0.52,True,0.52,0.52
+porcino,60-100,3175,Ile digest. std.,%,0.42,True,0.42,0.42
+porcino,60-100,3175,Calcio,%,0.73,False,0.65,0.80
+porcino,60-100,3175,Fósforo total,%,0.53,False,0.53,0.53
+porcino,60-100,3175,Fósforo digest. mín.,%,0.25,False,0.25,0.25
+porcino,60-100,3175,Magnesio,ppm,400,False,400,400
+porcino,60-100,3175,Sodio,%,0.17,False,0.17,0.17
+porcino,60-100,3175,Cloro,%,0.14,False,0.14,0.14
+porcino,60-100,3175,Potasio,%,0.65,False,0.25,1.05
+porcino,60-100,3175,Ácido linoleico,%,1.50,False,1.50,1.50
 
-porcino,60-100,EM porcino,kcal/kg,3175,3175
-porcino,60-100,EN porcino,kcal/kg,2400,2400
-porcino,60-100,Extracto etéreo,%,4,8
-porcino,60-100,Fibra bruta,%,3.5,6.3
-porcino,60-100,FND,%,11,15.5
-porcino,60-100,Almidón,%,35,35
-porcino,60-100,Proteína bruta,%,14.8,17.0
-porcino,60-100,Lys total,%,0.90,0.90
-porcino,60-100,Met total,%,0.28,0.28
-porcino,60-100,Met + cys total,%,0.54,0.54
-porcino,60-100,Thr total,%,0.58,0.58
-porcino,60-100,Trp total,%,0.17,0.17
-porcino,60-100,Val total,%,0.61,0.61
-porcino,60-100,Ile total,%,0.49,0.49
-porcino,60-100,Lys digest. std.,%,0.77,0.77
-porcino,60-100,Met digest. std.,%,0.24,0.24
-porcino,60-100,Met + cys digest. std.,%,0.46,0.46
-porcino,60-100,Thr digest. std.,%,0.50,0.50
-porcino,60-100,Trp digest. std.,%,0.15,0.15
-porcino,60-100,Val digest. std.,%,0.52,0.52
-porcino,60-100,Ile digest. std.,%,0.42,0.42
-porcino,60-100,Calcio,%,0.65,0.80
-porcino,60-100,Fósforo total,%,0.53,0.53
-porcino,60-100,Fósforo digest. mín.,%,0.25,0.25
-porcino,60-100,Magnesio,ppm,400,400
-porcino,60-100,Sodio,%,0.17,0.17
-porcino,60-100,Cloro,%,0.14,0.14
-porcino,60-100,Potasio,%,0.25,1.05
-porcino,60-100,Ácido linoleico,%,1.50,1.50
-
-porcino,>100,EM porcino,kcal/kg,3150,3150
-porcino,>100,EN porcino,kcal/kg,2400,2400
-porcino,>100,Extracto etéreo,%,4,8
-porcino,>100,Fibra bruta,%,3.7,6.5
-porcino,>100,FND,%,11,16.5
-porcino,>100,Almidón,%,32,32
-porcino,>100,Proteína bruta,%,13.2,15.1
-porcino,>100,Lys total,%,0.75,0.75
-porcino,>100,Met total,%,0.24,0.24
-porcino,>100,Met + cys total,%,0.46,0.46
-porcino,>100,Thr total,%,0.50,0.50
-porcino,>100,Trp total,%,0.14,0.14
-porcino,>100,Val total,%,0.50,0.50
-porcino,>100,Ile total,%,0.42,0.42
-porcino,>100,Lys digest. std.,%,0.63,0.63
-porcino,>100,Met digest. std.,%,0.20,0.20
-porcino,>100,Met + cys digest. std.,%,0.38,0.38
-porcino,>100,Thr digest. std.,%,0.42,0.42
-porcino,>100,Trp digest. std.,%,0.12,0.12
-porcino,>100,Val digest. std.,%,0.42,0.42
-porcino,>100,Ile digest. std.,%,0.35,0.35
-porcino,>100,Calcio,%,0.59,0.80
-porcino,>100,Fósforo total,%,0.49,0.49
-porcino,>100,Fósforo digest. mín.,%,0.23,0.23
-porcino,>100,Magnesio,ppm,400,400
-porcino,>100,Sodio,%,0.16,0.16
-porcino,>100,Cloro,%,0.12,0.12
-porcino,>100,Potasio,%,0.24,1.10
-porcino,>100,Ácido linoleico,%,1.50,1.50
+porcino,>100,3150,EM porcino,kcal/kg,3150,False,,
+porcino,>100,3150,EN porcino,kcal/kg,2400,False,,
+porcino,>100,3150,Extracto etéreo,%,6,False,4,8
+porcino,>100,3150,Fibra bruta,%,5.1,False,3.7,6.5
+porcino,>100,3150,FND,%,13.75,False,11,16.5
+porcino,>100,3150,Almidón,%,32,False,32,32
+porcino,>100,3150,Proteína bruta,%,14.15,True,13.2,15.1
+porcino,>100,3150,Lys total,%,0.75,True,0.75,0.75
+porcino,>100,3150,Met total,%,0.24,True,0.24,0.24
+porcino,>100,3150,Met + cys total,%,0.46,True,0.46,0.46
+porcino,>100,3150,Thr total,%,0.50,True,0.50,0.50
+porcino,>100,3150,Trp total,%,0.14,True,0.14,0.14
+porcino,>100,3150,Val total,%,0.50,True,0.50,0.50
+porcino,>100,3150,Ile total,%,0.42,True,0.42,0.42
+porcino,>100,3150,Lys digest. std.,%,0.63,True,0.63,0.63
+porcino,>100,3150,Met digest. std.,%,0.20,True,0.20,0.20
+porcino,>100,3150,Met + cys digest. std.,%,0.38,True,0.38,0.38
+porcino,>100,3150,Thr digest. std.,%,0.42,True,0.42,0.42
+porcino,>100,3150,Trp digest. std.,%,0.12,True,0.12,0.12
+porcino,>100,3150,Val digest. std.,%,0.42,True,0.42,0.42
+porcino,>100,3150,Ile digest. std.,%,0.35,True,0.35,0.35
+porcino,>100,3150,Calcio,%,0.70,False,0.59,0.80
+porcino,>100,3150,Fósforo total,%,0.49,False,0.49,0.49
+porcino,>100,3150,Fósforo digest. mín.,%,0.23,False,0.23,0.23
+porcino,>100,3150,Magnesio,ppm,400,False,400,400
+porcino,>100,3150,Sodio,%,0.16,False,0.16,0.16
+porcino,>100,3150,Cloro,%,0.12,False,0.12,0.12
+porcino,>100,3150,Potasio,%,0.67,False,0.24,1.10
+porcino,>100,3150,Ácido linoleico,%,1.50,False,1.50,1.50
