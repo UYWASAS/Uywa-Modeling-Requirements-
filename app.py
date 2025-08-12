@@ -1,18 +1,11 @@
-# ==========================================
-# BLOQUE 1: IMPORTS, LOGIN, ESTILOS Y UTILIDADES
-# ==========================================
 import streamlit as st
 import pandas as pd
 import plotly.express as px
 import os
 
-from models.energy import PigGrowEnergy  # Completa con el resto de modelos según especies/etapas
+from models.energy import PigGrowEnergy
 from models.scale import scale_nutrients
 from helpers import energy_unit_convert
-
-# ==========================================
-# BLOQUE 1.1: LOGIN (AUTENTICACIÓN DE USUARIO)
-# ==========================================
 from auth import USERS_DB
 
 def login():
@@ -48,9 +41,6 @@ if "logged_in" not in st.session_state or not st.session_state["logged_in"]:
 USER_KEY = f"uywa_req_{st.session_state['usuario']}"
 user = st.session_state["user"]
 
-# ==========================================
-# BLOQUE 2: ESTILO CSS EMPRESARIAL Y VISIBILIDAD DE ÁREAS
-# ==========================================
 st.markdown("""
     <style>
     html, body, .stApp, .main, .block-container {
@@ -65,7 +55,6 @@ st.markdown("""
         color: #fff !important;
         font-family: 'Montserrat', sans-serif !important;
     }
-    /* Eliminamos los recuadros blancos card-box */
     .card-box {
         background: none !important;
         border: none !important;
@@ -111,9 +100,6 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# ==========================================
-# BLOQUE 3: SIDEBAR - SOLO BRANDING
-# ==========================================
 with st.sidebar:
     logo_path = "assets/logo_empresa.png"
     if os.path.exists(logo_path):
@@ -137,9 +123,6 @@ with st.sidebar:
         unsafe_allow_html=True
     )
 
-# ==========================================
-# BLOQUE 4: HEADER (SOLO TÍTULO, SUBTÍTULO Y USUARIO, SIN IMAGEN NI ICONO)
-# ==========================================
 st.markdown(f"""
 <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
   <div>
@@ -155,9 +138,6 @@ st.markdown(f"""
 <hr style="border-top:2px solid #dde7f7; margin: 18px 0 20px 0;">
 """, unsafe_allow_html=True)
 
-# ==========================================
-# BLOQUE 5: FORMULARIO PRINCIPAL DE PARÁMETROS (sin recuadros blancos)
-# ==========================================
 col1, col2 = st.columns([1.1, 1])
 
 with col1:
@@ -182,9 +162,7 @@ with col2:
 
 st.markdown('<hr>', unsafe_allow_html=True)
 
-# ==========================================
-# BLOQUE 6: ENTRADA DE PARÁMETROS ESPECÍFICOS (Porcinos - Crecimiento/Cebo usando nueva tabla nutrientes/etapas)
-# ==========================================
+# -------- BLOQUE DE PORCINOS CRECIMIENTO/CEBO CON ESCALAMIENTO REAL --------
 ME_total_disp = None
 AME_requerida_disp = None
 FI = None
@@ -213,7 +191,7 @@ if especie == "Porcinos" and etapa == "Crecimiento/Cebo":
     else:
         AME_requerida = AME_dieta
     AME_requerida_disp = energy_unit_convert(AME_requerida, "kcal", unidad_energia)
-    
+
     # Selección de ETAPA según peso vivo
     if PV < 60:
         etapa_nutr = "20-60"
@@ -221,12 +199,20 @@ if especie == "Porcinos" and etapa == "Crecimiento/Cebo":
         etapa_nutr = "60-100"
     else:
         etapa_nutr = ">100"
-    
-    # Filtrar nutrientes para porcino y etapa adecuada
-    nutr_stage = nutrients_df[(nutrients_df["especie"] == "porcino") & (nutrients_df["etapa"] == etapa_nutr)]
-    # Si tu función scale_nutrients requiere AME_requerida o solo el df, adapta aquí
+
+    nutr_stage = nutrients_df[(nutrients_df["especie"] == "porcino") & (nutrients_df["etapa"] == etapa_nutr)].copy()
+
+    # --- Normaliza columnas y tipos:
+    nutr_stage["valor_por_kg"] = pd.to_numeric(nutr_stage["valor_por_kg"], errors='coerce')
+    nutr_stage["referencia_AME_kcalkg"] = pd.to_numeric(nutr_stage["referencia_AME_kcalkg"], errors='coerce')
+    nutr_stage["escalable"] = nutr_stage["escalable"].astype(str).str.lower().map({"true": True, "false": False})
+
+    # Haz el escalamiento:
     scaled_nutr = scale_nutrients(nutr_stage, AME_requerida)
     csv_out = scaled_nutr.to_csv(index=False).encode()
+
+    energia_ref = nutr_stage["referencia_AME_kcalkg"].iloc[0]
+    st.caption(f"Energía estándar de referencia para la etapa: {energia_ref} kcal/kg")
 
 elif especie == "Aves" and etapa == "Broiler":
     st.markdown('<div class="main-title" style="font-size:1.12em; margin-bottom:0.3em;">Parámetros productivos - Broiler</div>', unsafe_allow_html=True)
@@ -239,9 +225,8 @@ elif especie == "Aves" and etapa == "Broiler":
     FI = st.number_input("Ingesta diaria (kg/d)", min_value=0.01, value=0.11, key="fi_broiler")
     # Placeholder lógica, implementar modelo real
 
-# ==========================================
-# BLOQUE 7: CARDS DE RESULTADOS (sin recuadros blancos)
-# ==========================================
+st.markdown('<hr>', unsafe_allow_html=True)
+
 if ME_total_disp is not None and AME_requerida_disp is not None and FI is not None:
     st.markdown('<div class="card-box">', unsafe_allow_html=True)
     st.markdown('<div class="main-title" style="font-size:1.12em; margin-bottom:0.3em;">Resultados principales</div>', unsafe_allow_html=True)
@@ -251,9 +236,6 @@ if ME_total_disp is not None and AME_requerida_disp is not None and FI is not No
     col3.metric(label="FI utilizada", value=f"{FI:.2f} kg/d")
     st.markdown('</div>', unsafe_allow_html=True)
 
-    # ==========================================
-    # BLOQUE 8: TABLA DE NUTRIENTES ESCALADOS
-    # ==========================================
     if scaled_nutr is not None:
         st.markdown('<div class="card-box">', unsafe_allow_html=True)
         st.markdown('<div class="main-title" style="font-size:1.12em; margin-bottom:0.3em;">Nutrientes escalados por kg de dieta</div>', unsafe_allow_html=True)
@@ -261,9 +243,6 @@ if ME_total_disp is not None and AME_requerida_disp is not None and FI is not No
         st.download_button("Descargar CSV", data=csv_out, file_name="nutrientes_escalados.csv")
         st.markdown('</div>', unsafe_allow_html=True)
 
-    # ==========================================
-    # BLOQUE 9: GRÁFICO DE SENSIBILIDAD (OPCIONAL)
-    # ==========================================
     with st.expander("Mostrar sensibilidad de AME requerida vs FI"):
         fi_range = [x/10 for x in range(10, 40)]
         ame_range = [ME_total_disp / fi for fi in fi_range]
@@ -277,17 +256,11 @@ if ME_total_disp is not None and AME_requerida_disp is not None and FI is not No
         fig.update_layout(font=dict(family="Montserrat, Arial", size=14, color="#19345c"))
         st.plotly_chart(fig, use_container_width=True)
 
-    # ==========================================
-    # BLOQUE 10: VALIDACIONES Y MENSAJES
-    # ==========================================
     if AME_requerida_disp > 3600 and isinstance(AME_requerida_disp, (int, float)):
         st.warning("AME requerida excede el rango típico para esta etapa. Revisar parámetros o FI.")
     if FI < 0.5:
         st.warning("La FI es muy baja para esta etapa. Revisar.")
 
-# ==========================================
-# BLOQUE 11: FOOTER Y CRÉDITOS
-# ==========================================
 st.markdown("""
 <div style="text-align:center;color:gray;font-size:0.97em;margin-top:40px;font-family:Montserrat,Arial;">
     <em>App de modelado nutricional - v1.0 | Uywa | Todos los coeficientes y reglas calibrables en <code>params/</code></em>
