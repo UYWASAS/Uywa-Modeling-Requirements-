@@ -362,7 +362,7 @@ with tabs[1]:
         st.info(f"Ecuación seleccionada automáticamente: {eq_choice}")
 
 # ========================
-# BLOQUE 2.4: Cálculo energético (usar compute_energy)
+# BLOQUE 2.4: Cálculo energético (corrige unidades y recalcula)
 # ========================
 st.subheader("Resultado energético estimado")
 
@@ -371,6 +371,12 @@ inputs_dict = {}
 for col in comp_edit.columns:
     try:
         val = float(comp_edit.iloc[0][col])
+        # --- CORRECCIÓN DE UNIDADES ---
+        # Si el valor está entre 0 y 1000 y la columna corresponde a un nutriente principal en %, multiplica por 10.
+        # Esto es típico en tablas NRC: CP, EE, Ash, CF, NDF, ADF, Starch, Sugars, etc.
+        if col in ["Ash", "CP", "EE", "CF", "NDF", "ADF", "Starch", "Sugars", "GE"]:
+            if val is not None and val <= 100:  # asume que está en %
+                val = val * 10  # convierte a g/kg MS
     except Exception:
         val = None
     inputs_dict[col] = val
@@ -386,11 +392,9 @@ if "NFE" not in inputs_dict or inputs_dict["NFE"] is None:
             + inputs_dict.get("CF", 0)
         )
 
-# Determinar el nombre de la función/metodología si corresponde
+# Determinar método (ecuación) compatible para compute_energy
 method_name = None
 if eq_mode == "Manual":
-    # Si eq_choice es el nombre de la función real (ej: "men_corn") úsalo;
-    # si es solo una descripción amigable, deberás mapearlo a la función real aquí.
     method_name = eq_choice.split()[0] if isinstance(eq_choice, str) else None
 
 try:
@@ -401,7 +405,7 @@ try:
         inputs=inputs_dict,
         return_asfed=(unidad_base_mp == "as-fed"),
         DM_pct=inputs_dict.get("DM", None),
-        decimals=0
+        decimals=1
     )
     energia = result["value"]
     ecuacion_usada = result["equation"]
