@@ -11,7 +11,7 @@ from auth import USERS_DB
 # ==== NUEVO: Importar módulos para la pestaña de energía de materias primas ====
 from core.ingredients import IngredientInput, get_ingredient_defaults, load_ingredients_map
 from core.selector import select_equation, list_applicable_equations
-from core.equations import estimate_energy_stub
+from core.equations import compute_energy
 from core.scaling import scale_nutrients as scale_nutrients_ingredientes
 from core.utils import (
     convert_unit,
