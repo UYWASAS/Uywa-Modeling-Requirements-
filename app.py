@@ -183,7 +183,7 @@ with col2:
 st.markdown('<hr>', unsafe_allow_html=True)
 
 # ==========================================
-# BLOQUE 6: ENTRADA DE PARÁMETROS ESPECÍFICOS (sin recuadros blancos)
+# BLOQUE 6: ENTRADA DE PARÁMETROS ESPECÍFICOS (Porcinos - Crecimiento/Cebo usando nueva tabla nutrientes/etapas)
 # ==========================================
 ME_total_disp = None
 AME_requerida_disp = None
@@ -192,7 +192,6 @@ scaled_nutr = None
 csv_out = None
 
 if especie == "Porcinos" and etapa == "Crecimiento/Cebo":
-    st.markdown('<div class="card-box">', unsafe_allow_html=True)
     st.markdown('<div class="main-title" style="font-size:1.12em; margin-bottom:0.3em;">Parámetros productivos - Crecimiento/Cebo</div>', unsafe_allow_html=True)
     pig_grow_df = pd.read_csv("params/pig_grow.csv")
     nutrients_df = pd.read_csv(archivo_req)
@@ -204,7 +203,6 @@ if especie == "Porcinos" and etapa == "Crecimiento/Cebo":
     T_amb = st.number_input("Temperatura ambiente (°C)", min_value=0.0, value=20.0, key="tamb_porcino")
     AME_dieta = st.number_input("AME dieta (kcal/kg)", min_value=1000.0, value=3100.0, key="amedieta_porcino")
     FI = st.number_input("Ingesta diaria (kg/d)", min_value=0.1, value=2.2, key="fi_porcino")
-    st.markdown('</div>', unsafe_allow_html=True)
 
     params = pig_grow_df[pig_grow_df["categoria"] == categoria].iloc[0].to_dict()
     energy_model = PigGrowEnergy(params, unidad_energia)
@@ -215,12 +213,22 @@ if especie == "Porcinos" and etapa == "Crecimiento/Cebo":
     else:
         AME_requerida = AME_dieta
     AME_requerida_disp = energy_unit_convert(AME_requerida, "kcal", unidad_energia)
-    nutr_stage = nutrients_df[(nutrients_df["especie"] == "broiler") & (nutrients_df["etapa"] == "engorde")]
+    
+    # Selección de ETAPA según peso vivo
+    if PV < 60:
+        etapa_nutr = "20-60"
+    elif PV < 100:
+        etapa_nutr = "60-100"
+    else:
+        etapa_nutr = ">100"
+    
+    # Filtrar nutrientes para porcino y etapa adecuada
+    nutr_stage = nutrients_df[(nutrients_df["especie"] == "porcino") & (nutrients_df["etapa"] == etapa_nutr)]
+    # Si tu función scale_nutrients requiere AME_requerida o solo el df, adapta aquí
     scaled_nutr = scale_nutrients(nutr_stage, AME_requerida)
     csv_out = scaled_nutr.to_csv(index=False).encode()
 
 elif especie == "Aves" and etapa == "Broiler":
-    st.markdown('<div class="card-box">', unsafe_allow_html=True)
     st.markdown('<div class="main-title" style="font-size:1.12em; margin-bottom:0.3em;">Parámetros productivos - Broiler</div>', unsafe_allow_html=True)
     broiler_params_df = pd.read_csv("params/broiler.csv")
     nutrients_df = pd.read_csv(archivo_req)
@@ -229,10 +237,7 @@ elif especie == "Aves" and etapa == "Broiler":
     ADG = st.number_input("Ganancia diaria (g/d)", min_value=0.0, value=60.0, step=1.0, key="adg_broiler")
     T_amb = st.number_input("Temperatura ambiente (°C)", min_value=0.0, value=22.0, key="tamb_broiler")
     FI = st.number_input("Ingesta diaria (kg/d)", min_value=0.01, value=0.11, key="fi_broiler")
-    st.markdown('</div>', unsafe_allow_html=True)
     # Placeholder lógica, implementar modelo real
-
-st.markdown('<hr>', unsafe_allow_html=True)
 
 # ==========================================
 # BLOQUE 7: CARDS DE RESULTADOS (sin recuadros blancos)
