@@ -362,7 +362,7 @@ with tabs[1]:
         st.info(f"Ecuación seleccionada automáticamente: {eq_choice}")
 
 # ========================
-# BLOQUE 2.4: Cálculo energético (corregido para NRC)
+# BLOQUE 2.4: Cálculo energético (corrige unidades y recalcula)
 # ========================
 st.subheader("Resultado energético estimado")
 
@@ -372,24 +372,27 @@ for col in comp_edit.columns:
     try:
         val = float(comp_edit.iloc[0][col])
         # --- CORRECCIÓN DE UNIDADES ---
-        # Si el valor está en g/kg y es un nutriente principal, conviértelo a %
+        # Si el valor está entre 0 y 1000 y la columna corresponde a un nutriente principal en %, multiplica por 10.
+        # Esto es típico en tablas NRC: CP, EE, Ash, CF, NDF, ADF, Starch, Sugars, etc.
         if col in ["Ash", "CP", "EE", "CF", "NDF", "ADF", "Starch", "Sugars", "GE"]:
-            val = val / 10  # g/kg -> %
+            if val is not None and val <= 100:  # asume que está en %
+                val = val * 10  # convierte a g/kg MS
     except Exception:
         val = None
     inputs_dict[col] = val
 
-# Calcular NFE (%) si falta y hay datos suficientes
+# Calcular NFE si falta y hay datos suficientes
 if "NFE" not in inputs_dict or inputs_dict["NFE"] is None:
     required = ["Ash", "CP", "EE", "CF"]
     if all(inputs_dict.get(x) is not None for x in required):
-        inputs_dict["NFE"] = 100 - (
+        inputs_dict["NFE"] = 1000 - (
             inputs_dict.get("Ash", 0)
             + inputs_dict.get("CP", 0)
             + inputs_dict.get("EE", 0)
             + inputs_dict.get("CF", 0)
         )
 
+# Determinar método (ecuación) compatible para compute_energy
 method_name = None
 if eq_mode == "Manual":
     method_name = eq_choice.split()[0] if isinstance(eq_choice, str) else None
