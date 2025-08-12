@@ -4,7 +4,10 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-from models.energy import PigGrowEnergy
+import os
+
+# Importa tus modelos y helpers
+from models.energy import PigGrowEnergy  # Completa con el resto de modelos según especies/etapas
 from models.scale import scale_nutrients
 from helpers import energy_unit_convert
 
@@ -39,7 +42,12 @@ st.markdown("""
 # ==========================================
 # BLOQUE 2: SIDEBAR - LOGO Y ENTRADAS GLOBALES
 # ==========================================
-st.sidebar.image("assets/logo_empresa.png", use_column_width=True)
+logo_path = "assets/logo_empresa.png"
+if os.path.exists(logo_path):
+    st.sidebar.image(logo_path, use_container_width=True)
+else:
+    st.sidebar.markdown("**[Logo no encontrado]**")
+
 st.sidebar.title("NutriEnergia")
 st.sidebar.markdown("Modelador de requerimientos energéticos y dietarios\nDesarrollado por Uywa")
 
@@ -58,8 +66,16 @@ st.sidebar.info("Coeficientes y reglas editables en la carpeta `params/`.\nFuent
 
 # ==========================================
 # BLOQUE 3: CARGA DE DATOS Y PARÁMETROS SEGÚN ETAPA/ESPECIE
+# (Puedes expandir cada especie/etapa en un bloque adicional)
 # ==========================================
+ME_total_disp = None
+AME_requerida_disp = None
+FI = None
+scaled_nutr = None
+csv_out = None
+
 if especie == "Porcinos" and etapa == "Crecimiento/Cebo":
+    # --- BLOQUE 3.1: PARÁMETROS Y ENTRADAS PARA PORCINOS CRECIMIENTO/CEBO ---
     pig_grow_df = pd.read_csv("params/pig_grow.csv")
     nutrients_df = pd.read_csv(archivo_req)
     categoria = st.sidebar.selectbox("Sexo/edad", pig_grow_df["categoria"].unique())
@@ -88,6 +104,31 @@ if especie == "Porcinos" and etapa == "Crecimiento/Cebo":
     scaled_nutr = scale_nutrients(nutr_stage, AME_requerida)
     csv_out = scaled_nutr.to_csv(index=False).encode()
 
+# === BLOQUE 3.2: EJEMPLO PARA BROILER (añade tus modelos y lógica real) ===
+elif especie == "Aves" and etapa == "Broiler":
+    # Cargar parámetros y entradas específicas para broiler
+    broiler_params_df = pd.read_csv("params/broiler.csv")
+    nutrients_df = pd.read_csv(archivo_req)
+    genetica = st.sidebar.selectbox("Genética", broiler_params_df["genetica"].unique())
+    W = st.sidebar.number_input("Peso vivo (kg)", min_value=0.1, value=2.0, step=0.01)
+    ADG = st.sidebar.number_input("Ganancia diaria (g/d)", min_value=0.0, value=60.0, step=1.0)
+    T_amb = st.sidebar.number_input("Temperatura ambiente (°C)", min_value=0.0, value=22.0)
+    FI = st.sidebar.number_input("Ingesta diaria (kg/d)", min_value=0.01, value=0.11)
+    # Placeholder: Debes implementar BroilerEnergy en models/energy.py
+    # from models.energy import BroilerEnergy
+    # params = broiler_params_df[broiler_params_df["genetica"] == genetica].iloc[0].to_dict()
+    # energy_model = BroilerEnergy(params, unidad_energia)
+    # ME_total = energy_model.me_total(W, ADG, T_amb)
+    # ME_total_disp = energy_unit_convert(ME_total, "kcal", unidad_energia)
+    # if FI > 0:
+    #     AME_requerida = ME_total / FI
+    # else:
+    #     AME_requerida = 3000
+    # AME_requerida_disp = energy_unit_convert(AME_requerida, "kcal", unidad_energia)
+    # nutr_stage = nutrients_df[(nutrients_df["especie"] == "broiler") & (nutrients_df["etapa"] == "engorde")]
+    # scaled_nutr = scale_nutrients(nutr_stage, AME_requerida)
+    # csv_out = scaled_nutr.to_csv(index=False).encode()
+
 # ==========================================
 # BLOQUE 4: HEADER PRINCIPAL Y DESCRIPCIÓN
 # ==========================================
@@ -105,7 +146,7 @@ st.markdown("")
 # ==========================================
 # BLOQUE 5: CARDS DE RESULTADO PRINCIPALES
 # ==========================================
-if especie == "Porcinos" and etapa == "Crecimiento/Cebo":
+if ME_total_disp is not None and AME_requerida_disp is not None and FI is not None:
     col1, col2, col3 = st.columns(3)
     col1.metric(label="Energía total requerida", value=f"{ME_total_disp:.1f} {unidad_energia}/día")
     col2.metric(label="Densidad energética requerida", value=f"{AME_requerida_disp:.0f} {unidad_energia}/kg")
@@ -116,18 +157,18 @@ if especie == "Porcinos" and etapa == "Crecimiento/Cebo":
     # ==========================================
     # BLOQUE 6: TABLA DE NUTRIENTES ESCALADOS
     # ==========================================
-    st.markdown("### Nutrientes escalados por kg de dieta")
-    st.dataframe(scaled_nutr[["nutriente", "valor_por_kg", "unidad"]], use_container_width=True)
-    st.download_button("Descargar CSV", data=csv_out, file_name="nutrientes_escalados.csv")
+    if scaled_nutr is not None:
+        st.markdown("### Nutrientes escalados por kg de dieta")
+        st.dataframe(scaled_nutr[["nutriente", "valor_por_kg", "unidad"]], use_container_width=True)
+        st.download_button("Descargar CSV", data=csv_out, file_name="nutrientes_escalados.csv")
 
     # ==========================================
     # BLOQUE 7: GRÁFICO DE SENSIBILIDAD (OPCIONAL)
     # ==========================================
     with st.expander("Mostrar sensibilidad de AME requerida vs FI"):
         fi_range = [x/10 for x in range(10, 40)]
-        ame_range = [ME_total / fi for fi in fi_range]
-        ame_range_disp = [energy_unit_convert(val, "kcal", unidad_energia) for val in ame_range]
-        fig = px.line(x=fi_range, y=ame_range_disp,
+        ame_range = [ME_total_disp / fi for fi in fi_range]
+        fig = px.line(x=fi_range, y=ame_range,
                       labels={"x": "FI (kg/d)", "y": f"AME requerida ({unidad_energia}/kg)"},
                       title="Sensibilidad de AME requerida según FI")
         st.plotly_chart(fig, use_container_width=True)
@@ -135,10 +176,10 @@ if especie == "Porcinos" and etapa == "Crecimiento/Cebo":
     # ==========================================
     # BLOQUE 8: VALIDACIONES Y MENSAJES
     # ==========================================
-    if AME_requerida > 3600:
+    if AME_requerida_disp > 3600 and isinstance(AME_requerida_disp, (int, float)):
         st.warning("AME requerida excede el rango típico para esta etapa. Revisar parámetros o FI.")
     if FI < 0.5:
-        st.warning("La FI es muy baja para cerdos en crecimiento. Revisar.")
+        st.warning("La FI es muy baja para esta etapa. Revisar.")
 
 # ==========================================
 # BLOQUE 9: FOOTER Y CRÉDITOS
@@ -153,6 +194,8 @@ st.markdown("""
 # FIN DEL APP.PY
 # ==========================================
 
-# NOTA: Cada bloque está numerado e identificado por nombre.
-# Para agregar nuevas especies/etapas, copia y adapta los bloques 3, 5, 6, 7 y 8 según corresponda.
-# Los parámetros y rutas de archivos se encuentran en el bloque 3 y la barra lateral.
+# NOTA: 
+# - Cada bloque está numerado e identificado por nombre.
+# - Para agregar nuevas especies/etapas, copia/expande el BLOQUE 3 y adapta los cálculos y entradas.
+# - Si agregas nuevos archivos de parámetros, actualiza los selectbox y paths correspondientes.
+# - Implementa los modelos restantes en models/energy.py.
