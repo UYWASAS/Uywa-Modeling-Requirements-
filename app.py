@@ -361,12 +361,11 @@ with tabs[1]:
         eq_choice = select_equation(especie_mp, familia, comp_edit)
         st.info(f"Ecuación seleccionada automáticamente: {eq_choice}")
 
-    # ========================
+# ========================
 # BLOQUE 2.4: Cálculo energético (usar compute_energy)
 # ========================
 st.subheader("Resultado energético estimado")
 
-# --- Recopilación de inputs en dict para compute_energy ---
 inputs_dict = {}
 for col in comp_edit.columns:
     try:
@@ -375,13 +374,10 @@ for col in comp_edit.columns:
         val = None
     inputs_dict[col] = val
 
-# Determinar método (ecuación) compatible para compute_energy
 method_name = None
 if eq_mode == "Manual":
-    # El nombre de la función a usar debe estar mapeado correctamente
-    # Si en tu selector agregas el nombre de la función, úsalo.
-    # Ejemplo: "men_corn" o "me_noblet_perez"
-    # Aquí solo a modo de ejemplo, usar el texto del selectbox, pero ajusta a tu selector real
+    # Si eq_choice tiene el nombre de la función, úsalo directamente;
+    # si es solo descripción de usuario, mapea a la función real aquí.
     method_name = eq_choice.split()[0] if isinstance(eq_choice, str) else None
 
 try:
