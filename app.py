@@ -65,24 +65,14 @@ st.markdown("""
         color: #fff !important;
         font-family: 'Montserrat', sans-serif !important;
     }
+    /* Eliminamos los recuadros blancos card-box */
     .card-box {
-        background: #fff !important;
-        border-radius: 16px !important;
-        box-shadow: 0 2px 12px 0 rgba(25,52,92,0.08) !important;
-        border: 1.5px solid #dde7f7 !important;
-        padding: 24px 28px 18px 28px !important;
-        margin-bottom: 28px !important;
-    }
-    .card-box, .card-box * {
-        color: #19345c !important;
-        font-family: 'Montserrat', sans-serif !important;
-    }
-    .card-box input, .card-box select, .card-box textarea {
-        color: #19345c !important;
-        font-family: 'Montserrat', sans-serif !important;
-        background: #f8fbfd !important;
-        border-radius: 7px !important;
-        border: 1px solid #dde7f7 !important;
+        background: none !important;
+        border: none !important;
+        box-shadow: none !important;
+        border-radius: 0 !important;
+        padding: 0 !important;
+        margin-bottom: 0 !important;
     }
     .main-title, h1, h2, h3, h4, h5, h6 {
         font-family: 'Montserrat', sans-serif !important;
@@ -166,7 +156,7 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 # ==========================================
-# BLOQUE 5: FORMULARIO PRINCIPAL DE PARÁMETROS (títulos DENTRO de los cards, NI UN SOLO CARD VACÍO)
+# BLOQUE 5: FORMULARIO PRINCIPAL DE PARÁMETROS (sin recuadros blancos)
 # ==========================================
 col1, col2 = st.columns([1.1, 1])
 
@@ -193,7 +183,7 @@ with col2:
 st.markdown('<hr>', unsafe_allow_html=True)
 
 # ==========================================
-# BLOQUE 6: ENTRADA DE PARÁMETROS ESPECÍFICOS (título DENTRO del card)
+# BLOQUE 6: ENTRADA DE PARÁMETROS ESPECÍFICOS (sin recuadros blancos)
 # ==========================================
 ME_total_disp = None
 AME_requerida_disp = None
@@ -245,7 +235,7 @@ elif especie == "Aves" and etapa == "Broiler":
 st.markdown('<hr>', unsafe_allow_html=True)
 
 # ==========================================
-# BLOQUE 7: CARDS DE RESULTADOS (título DENTRO del card)
+# BLOQUE 7: CARDS DE RESULTADOS (sin recuadros blancos)
 # ==========================================
 if ME_total_disp is not None and AME_requerida_disp is not None and FI is not None:
     st.markdown('<div class="card-box">', unsafe_allow_html=True)
