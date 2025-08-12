@@ -366,6 +366,7 @@ with tabs[1]:
 # ========================
 st.subheader("Resultado energético estimado")
 
+# Recopilación de inputs del DataFrame editable
 inputs_dict = {}
 for col in comp_edit.columns:
     try:
@@ -374,10 +375,12 @@ for col in comp_edit.columns:
         val = None
     inputs_dict[col] = val
 
+# Determinar el nombre de la función/metodología si corresponde
 method_name = None
 if eq_mode == "Manual":
-    # Si eq_choice tiene el nombre de la función, úsalo directamente;
-    # si es solo descripción de usuario, mapea a la función real aquí.
+    # Si eq_choice es el nombre de la función real (ej: "men_corn") úsalo;
+    # si es solo una descripción amigable, deberás mapearlo a la función real aquí.
+    # Aquí dejamos un ejemplo genérico:
     method_name = eq_choice.split()[0] if isinstance(eq_choice, str) else None
 
 try:
