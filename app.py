@@ -166,7 +166,7 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 # ==========================================
-# BLOQUE 5: FORMULARIO PRINCIPAL DE PARÁMETROS (títulos DENTRO de los cards, sin cards vacíos)
+# BLOQUE 5: FORMULARIO PRINCIPAL DE PARÁMETROS (títulos DENTRO de los cards, NI UN SOLO CARD VACÍO)
 # ==========================================
 col1, col2 = st.columns([1.1, 1])
 
@@ -201,47 +201,46 @@ FI = None
 scaled_nutr = None
 csv_out = None
 
-with st.container():
-    if especie == "Porcinos" and etapa == "Crecimiento/Cebo":
-        st.markdown('<div class="card-box">', unsafe_allow_html=True)
-        st.markdown('<div class="main-title" style="font-size:1.12em; margin-bottom:0.3em;">Parámetros productivos - Crecimiento/Cebo</div>', unsafe_allow_html=True)
-        pig_grow_df = pd.read_csv("params/pig_grow.csv")
-        nutrients_df = pd.read_csv(archivo_req)
-        categoria = st.selectbox("Sexo/edad", pig_grow_df["categoria"].unique(), key="categoria_porcino")
-        PV = st.number_input("Peso vivo (kg)", min_value=1.0, value=50.0, step=0.5, key="pv_porcino")
-        ADG = st.number_input("Ganancia diaria (g/d)", min_value=0.0, value=700.0, step=1.0, key="adg_porcino")
-        f_P = st.number_input("Fracción proteica (f_P)", min_value=0.0, max_value=1.0, value=0.17, key="fp_porcino")
-        f_G = st.number_input("Fracción grasa (f_G)", min_value=0.0, max_value=1.0, value=0.15, key="fg_porcino")
-        T_amb = st.number_input("Temperatura ambiente (°C)", min_value=0.0, value=20.0, key="tamb_porcino")
-        AME_dieta = st.number_input("AME dieta (kcal/kg)", min_value=1000.0, value=3100.0, key="amedieta_porcino")
-        FI = st.number_input("Ingesta diaria (kg/d)", min_value=0.1, value=2.2, key="fi_porcino")
-        st.markdown('</div>', unsafe_allow_html=True)
+if especie == "Porcinos" and etapa == "Crecimiento/Cebo":
+    st.markdown('<div class="card-box">', unsafe_allow_html=True)
+    st.markdown('<div class="main-title" style="font-size:1.12em; margin-bottom:0.3em;">Parámetros productivos - Crecimiento/Cebo</div>', unsafe_allow_html=True)
+    pig_grow_df = pd.read_csv("params/pig_grow.csv")
+    nutrients_df = pd.read_csv(archivo_req)
+    categoria = st.selectbox("Sexo/edad", pig_grow_df["categoria"].unique(), key="categoria_porcino")
+    PV = st.number_input("Peso vivo (kg)", min_value=1.0, value=50.0, step=0.5, key="pv_porcino")
+    ADG = st.number_input("Ganancia diaria (g/d)", min_value=0.0, value=700.0, step=1.0, key="adg_porcino")
+    f_P = st.number_input("Fracción proteica (f_P)", min_value=0.0, max_value=1.0, value=0.17, key="fp_porcino")
+    f_G = st.number_input("Fracción grasa (f_G)", min_value=0.0, max_value=1.0, value=0.15, key="fg_porcino")
+    T_amb = st.number_input("Temperatura ambiente (°C)", min_value=0.0, value=20.0, key="tamb_porcino")
+    AME_dieta = st.number_input("AME dieta (kcal/kg)", min_value=1000.0, value=3100.0, key="amedieta_porcino")
+    FI = st.number_input("Ingesta diaria (kg/d)", min_value=0.1, value=2.2, key="fi_porcino")
+    st.markdown('</div>', unsafe_allow_html=True)
 
-        params = pig_grow_df[pig_grow_df["categoria"] == categoria].iloc[0].to_dict()
-        energy_model = PigGrowEnergy(params, unidad_energia)
-        ME_total = energy_model.me_total(PV, ADG, f_P, f_G, T_amb)
-        ME_total_disp = energy_unit_convert(ME_total, "kcal", unidad_energia)
-        if FI > 0:
-            AME_requerida = ME_total / FI
-        else:
-            AME_requerida = AME_dieta
-        AME_requerida_disp = energy_unit_convert(AME_requerida, "kcal", unidad_energia)
-        nutr_stage = nutrients_df[(nutrients_df["especie"] == "broiler") & (nutrients_df["etapa"] == "engorde")]
-        scaled_nutr = scale_nutrients(nutr_stage, AME_requerida)
-        csv_out = scaled_nutr.to_csv(index=False).encode()
+    params = pig_grow_df[pig_grow_df["categoria"] == categoria].iloc[0].to_dict()
+    energy_model = PigGrowEnergy(params, unidad_energia)
+    ME_total = energy_model.me_total(PV, ADG, f_P, f_G, T_amb)
+    ME_total_disp = energy_unit_convert(ME_total, "kcal", unidad_energia)
+    if FI > 0:
+        AME_requerida = ME_total / FI
+    else:
+        AME_requerida = AME_dieta
+    AME_requerida_disp = energy_unit_convert(AME_requerida, "kcal", unidad_energia)
+    nutr_stage = nutrients_df[(nutrients_df["especie"] == "broiler") & (nutrients_df["etapa"] == "engorde")]
+    scaled_nutr = scale_nutrients(nutr_stage, AME_requerida)
+    csv_out = scaled_nutr.to_csv(index=False).encode()
 
-    elif especie == "Aves" and etapa == "Broiler":
-        st.markdown('<div class="card-box">', unsafe_allow_html=True)
-        st.markdown('<div class="main-title" style="font-size:1.12em; margin-bottom:0.3em;">Parámetros productivos - Broiler</div>', unsafe_allow_html=True)
-        broiler_params_df = pd.read_csv("params/broiler.csv")
-        nutrients_df = pd.read_csv(archivo_req)
-        genetica = st.selectbox("Genética", broiler_params_df["genetica"].unique(), key="genetica_broiler")
-        W = st.number_input("Peso vivo (kg)", min_value=0.1, value=2.0, step=0.01, key="w_broiler")
-        ADG = st.number_input("Ganancia diaria (g/d)", min_value=0.0, value=60.0, step=1.0, key="adg_broiler")
-        T_amb = st.number_input("Temperatura ambiente (°C)", min_value=0.0, value=22.0, key="tamb_broiler")
-        FI = st.number_input("Ingesta diaria (kg/d)", min_value=0.01, value=0.11, key="fi_broiler")
-        st.markdown('</div>', unsafe_allow_html=True)
-        # Placeholder lógica, implementar modelo real
+elif especie == "Aves" and etapa == "Broiler":
+    st.markdown('<div class="card-box">', unsafe_allow_html=True)
+    st.markdown('<div class="main-title" style="font-size:1.12em; margin-bottom:0.3em;">Parámetros productivos - Broiler</div>', unsafe_allow_html=True)
+    broiler_params_df = pd.read_csv("params/broiler.csv")
+    nutrients_df = pd.read_csv(archivo_req)
+    genetica = st.selectbox("Genética", broiler_params_df["genetica"].unique(), key="genetica_broiler")
+    W = st.number_input("Peso vivo (kg)", min_value=0.1, value=2.0, step=0.01, key="w_broiler")
+    ADG = st.number_input("Ganancia diaria (g/d)", min_value=0.0, value=60.0, step=1.0, key="adg_broiler")
+    T_amb = st.number_input("Temperatura ambiente (°C)", min_value=0.0, value=22.0, key="tamb_broiler")
+    FI = st.number_input("Ingesta diaria (kg/d)", min_value=0.01, value=0.11, key="fi_broiler")
+    st.markdown('</div>', unsafe_allow_html=True)
+    # Placeholder lógica, implementar modelo real
 
 st.markdown('<hr>', unsafe_allow_html=True)
 
