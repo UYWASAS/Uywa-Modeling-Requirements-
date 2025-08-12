@@ -1,13 +1,14 @@
 import pandas as pd
-from typing import Dict, Any
 
 def load_ingredients_map(path:str) -> pd.DataFrame:
-    """Carga el mapa de ingredientes a familias."""
-    return pd.read_csv(path)
+    # Retorna un DataFrame vacío si no existe el archivo, para evitar errores al arrancar la app.
+    try:
+        return pd.read_csv(path)
+    except Exception:
+        return pd.DataFrame({"ingrediente":[], "familia":[]})
 
-def get_ingredient_defaults(nombre:str, familia:str, especie:str) -> Dict[str,Any]:
-    """Devuelve composición default para el ingrediente (stub, puedes adaptar)."""
-    # TODO: Leer de archivo data/ingredients_defaults.csv o similar.
+def get_ingredient_defaults(nombre:str, familia:str, especie:str) -> dict:
+    # Retorna una composición de ejemplo genérica.
     return {
         "DM": 880,
         "Ash": 50,
@@ -23,8 +24,6 @@ def get_ingredient_defaults(nombre:str, familia:str, especie:str) -> Dict[str,An
     }
 
 class IngredientInput:
-    """Validador de entradas de ingrediente (puedes expandir con pydantic)."""
-    # TODO: Implementar validaciones reales.
-    def __init__(self, comp:Dict[str,Any]):
+    """Stub para validación futura"""
+    def __init__(self, comp):
         self.data = comp
-        # checks here
