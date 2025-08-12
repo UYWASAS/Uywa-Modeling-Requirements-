@@ -1,5 +1,5 @@
 # ==========================================
-# BLOQUE 1: IMPORTS, ESTILOS Y UTILIDADES
+# BLOQUE 1: IMPORTS, LOGIN, ESTILOS Y UTILIDADES
 # ==========================================
 import streamlit as st
 import pandas as pd
@@ -51,32 +51,43 @@ if "logged_in" not in st.session_state or not st.session_state["logged_in"]:
 USER_KEY = f"uywa_req_{st.session_state['usuario']}"
 user = st.session_state["user"]
 
-# --- ESTILO CSS EMPRESARIAL ---
+# ==========================================
+# BLOQUE 2: ESTILO CSS EMPRESARIAL Y VISIBILIDAD DE ÁREAS
+# ==========================================
 st.markdown("""
     <style>
     html, body, .stApp, .main, .block-container {
-        background: linear-gradient(120deg, #f3f6fa 0%, #e3ecf7 100%) !important;
-        background-color: #f3f6fa !important;
+        background: linear-gradient(120deg, #f4f7fa 0%, #e3ecf7 100%) !important;
+    }
+    section[data-testid="stSidebar"] {
+        background: #19345c !important;
+        color: #fff !important;
+        border-right: 1.5px solid #14233c !important;
+    }
+    section[data-testid="stSidebar"] * {
+        color: #fff !important;
+        font-family: 'Montserrat', sans-serif !important;
+    }
+    /* Cards y boxes principales */
+    .card-box {
+        background: #fff !important;
+        border-radius: 16px !important;
+        box-shadow: 0 2px 12px 0 rgba(25,52,92,0.08) !important;
+        border: 1.5px solid #dde7f7 !important;
+        padding: 24px 28px 18px 28px !important;
+        margin-bottom: 28px !important;
     }
     .main-title, h1, h2, h3, h4, h5, h6 {
         font-family: 'Montserrat', sans-serif !important;
         color: #19345c !important;
-        font-weight: 700 !important;
+        font-weight: 750 !important;
         margin-bottom:0.1em;
-        letter-spacing: 0.02em;
+        letter-spacing: 0.01em;
     }
     .subtitle {
-        font-size: 1.1em;
-        color: #555;
+        font-size: 1.18em;
+        color: #2e4771;
         font-family: 'Montserrat', sans-serif !important;
-    }
-    .param-card {
-        background: #eaf3fc;
-        border-radius: 12px;
-        padding: 24px 28px 12px 28px;
-        margin-bottom: 18px;
-        box-shadow: 0 2px 8px rgba(25,52,92,0.06);
-        border: 1px solid #dde7f7;
     }
     .stDownloadButton>button {
         background-color: #00838F;
@@ -85,27 +96,30 @@ st.markdown("""
         border-radius: 6px;
     }
     div[data-testid="metric-container"] {
-        background-color: #E0F7FA !important;
+        background-color: #f3fafd !important;
         border-radius: 8px;
         padding: 16px;
         margin: 4px;
         font-family: 'Montserrat', sans-serif !important;
+        border: 1px solid #dde7f7 !important;
     }
     .stDataFrame thead tr th { font-family: 'Montserrat', sans-serif !important; color: #19345c !important;}
     .stDataFrame tbody tr td { font-family: 'Montserrat', sans-serif !important;}
+    hr, .stDivider {
+        border: none;
+        border-top: 2px solid #dde7f7 !important;
+        margin: 32px 0 22px 0 !important;
+    }
     </style>
 """, unsafe_allow_html=True)
 
 # ==========================================
-# BLOQUE 2: SIDEBAR - SOLO BRANDING
+# BLOQUE 3: SIDEBAR - SOLO BRANDING
 # ==========================================
 with st.sidebar:
     logo_path = "assets/logo_empresa.png"
     if os.path.exists(logo_path):
         st.image(logo_path, use_container_width=True)
-    else:
-        st.markdown("**[Logo no encontrado]**")
-
     st.markdown(
         """
         <div style='text-align: center; margin-bottom:10px;'>
@@ -126,46 +140,50 @@ with st.sidebar:
     )
 
 # ==========================================
-# BLOQUE 3: FORMULARIO PRINCIPAL DE PARÁMETROS (cards por especie/etapa)
+# BLOQUE 4: HEADER SIN EMOJIS NI ICONOS INFORMALES
 # ==========================================
 st.markdown(f"<div style='text-align:right'>Usuario: <b>{st.session_state['usuario']}</b></div>", unsafe_allow_html=True)
 
 st.markdown("""
     <div style="display:flex;align-items:center;margin-bottom:8px;">
-        <img src="https://cdn-icons-png.flaticon.com/512/616/616408.png" width="52" style="margin-right: 18px"/>
+        <img src="assets/logo_empresa.png" width="50" style="margin-right: 18px"/>
         <div>
             <span class="main-title">Modelador de Requerimientos Energéticos y Dietarios</span><br>
             <span class="subtitle">Calcula energía total, densidad energética y tabla de nutrientes ajustada por etapa y especie.</span>
         </div>
     </div>
     """, unsafe_allow_html=True)
+st.markdown('<hr>', unsafe_allow_html=True)
 
-st.divider()
-
+# ==========================================
+# BLOQUE 5: FORMULARIO PRINCIPAL DE PARÁMETROS (cards por especie/etapa)
+# ==========================================
 col1, col2 = st.columns([1.1, 1])
 
 with col1:
-    with st.container():
-        st.subheader("1. Seleccione especie y etapa")
-        especie = st.selectbox("Especie", ["Porcinos", "Aves"], key="especie_main")
-        if especie == "Porcinos":
-            etapa = st.selectbox("Categoría", ["Crecimiento/Cebo", "Gestación", "Lactación"], key="etapa_porcino")
-        elif especie == "Aves":
-            etapa = st.selectbox("Categoría", ["Broiler", "Ponedora"], key="etapa_ave")
-        else:
-            etapa = None
+    st.markdown('<div class="card-box">', unsafe_allow_html=True)
+    st.subheader("1. Seleccione especie y etapa")
+    especie = st.selectbox("Especie", ["Porcinos", "Aves"], key="especie_main")
+    if especie == "Porcinos":
+        etapa = st.selectbox("Categoría", ["Crecimiento/Cebo", "Gestación", "Lactación"], key="etapa_porcino")
+    elif especie == "Aves":
+        etapa = st.selectbox("Categoría", ["Broiler", "Ponedora"], key="etapa_ave")
+    else:
+        etapa = None
+    st.markdown('</div>', unsafe_allow_html=True)
 
 with col2:
-    with st.container():
-        st.subheader("2. Configuración general")
-        unidad_energia = st.radio("Unidad de energía", ["kcal", "kJ", "MJ"], horizontal=True, key="unidad_energia_main")
-        archivo_req = st.selectbox("Archivo de requerimientos", ["params/nutrients_requirements.csv"], key="archivo_req_main")
-        st.info("Todos los coeficientes y reglas son editables desde la carpeta `params/`.\nFuente: NRC/FEDNA/empresa.")
+    st.markdown('<div class="card-box">', unsafe_allow_html=True)
+    st.subheader("2. Configuración general")
+    unidad_energia = st.radio("Unidad de energía", ["kcal", "kJ", "MJ"], horizontal=True, key="unidad_energia_main")
+    archivo_req = st.selectbox("Archivo de requerimientos", ["params/nutrients_requirements.csv"], key="archivo_req_main")
+    st.info("Todos los coeficientes y reglas son editables desde la carpeta `params/`.\nFuente: NRC/FEDNA/empresa.")
+    st.markdown('</div>', unsafe_allow_html=True)
 
-st.divider()
+st.markdown('<hr>', unsafe_allow_html=True)
 
 # ==========================================
-# BLOQUE 4: ENTRADA DE PARÁMETROS ESPECÍFICOS EN CARDS
+# BLOQUE 6: ENTRADA DE PARÁMETROS ESPECÍFICOS EN CARDS
 # ==========================================
 ME_total_disp = None
 AME_requerida_disp = None
@@ -175,67 +193,65 @@ csv_out = None
 
 with st.container():
     if especie == "Porcinos" and etapa == "Crecimiento/Cebo":
-        with st.container():
-            st.markdown('<div class="param-card">', unsafe_allow_html=True)
-            st.subheader("Parámetros productivos - Crecimiento/Cebo")
-            pig_grow_df = pd.read_csv("params/pig_grow.csv")
-            nutrients_df = pd.read_csv(archivo_req)
-            categoria = st.selectbox("Sexo/edad", pig_grow_df["categoria"].unique(), key="categoria_porcino")
-            PV = st.number_input("Peso vivo (kg)", min_value=1.0, value=50.0, step=0.5, key="pv_porcino")
-            ADG = st.number_input("Ganancia diaria (g/d)", min_value=0.0, value=700.0, step=1.0, key="adg_porcino")
-            f_P = st.number_input("Fracción proteica (f_P)", min_value=0.0, max_value=1.0, value=0.17, key="fp_porcino")
-            f_G = st.number_input("Fracción grasa (f_G)", min_value=0.0, max_value=1.0, value=0.15, key="fg_porcino")
-            T_amb = st.number_input("Temperatura ambiente (°C)", min_value=0.0, value=20.0, key="tamb_porcino")
-            AME_dieta = st.number_input("AME dieta (kcal/kg)", min_value=1000.0, value=3100.0, key="amedieta_porcino")
-            FI = st.number_input("Ingesta diaria (kg/d)", min_value=0.1, value=2.2, key="fi_porcino")
-            st.markdown('</div>', unsafe_allow_html=True)
+        st.markdown('<div class="card-box">', unsafe_allow_html=True)
+        st.subheader("Parámetros productivos - Crecimiento/Cebo")
+        pig_grow_df = pd.read_csv("params/pig_grow.csv")
+        nutrients_df = pd.read_csv(archivo_req)
+        categoria = st.selectbox("Sexo/edad", pig_grow_df["categoria"].unique(), key="categoria_porcino")
+        PV = st.number_input("Peso vivo (kg)", min_value=1.0, value=50.0, step=0.5, key="pv_porcino")
+        ADG = st.number_input("Ganancia diaria (g/d)", min_value=0.0, value=700.0, step=1.0, key="adg_porcino")
+        f_P = st.number_input("Fracción proteica (f_P)", min_value=0.0, max_value=1.0, value=0.17, key="fp_porcino")
+        f_G = st.number_input("Fracción grasa (f_G)", min_value=0.0, max_value=1.0, value=0.15, key="fg_porcino")
+        T_amb = st.number_input("Temperatura ambiente (°C)", min_value=0.0, value=20.0, key="tamb_porcino")
+        AME_dieta = st.number_input("AME dieta (kcal/kg)", min_value=1000.0, value=3100.0, key="amedieta_porcino")
+        FI = st.number_input("Ingesta diaria (kg/d)", min_value=0.1, value=2.2, key="fi_porcino")
+        st.markdown('</div>', unsafe_allow_html=True)
 
-            params = pig_grow_df[pig_grow_df["categoria"] == categoria].iloc[0].to_dict()
-            energy_model = PigGrowEnergy(params, unidad_energia)
-            ME_total = energy_model.me_total(PV, ADG, f_P, f_G, T_amb)
-            ME_total_disp = energy_unit_convert(ME_total, "kcal", unidad_energia)
-            if FI > 0:
-                AME_requerida = ME_total / FI
-            else:
-                AME_requerida = AME_dieta
-            AME_requerida_disp = energy_unit_convert(AME_requerida, "kcal", unidad_energia)
-            nutr_stage = nutrients_df[(nutrients_df["especie"] == "broiler") & (nutrients_df["etapa"] == "engorde")]
-            scaled_nutr = scale_nutrients(nutr_stage, AME_requerida)
-            csv_out = scaled_nutr.to_csv(index=False).encode()
+        params = pig_grow_df[pig_grow_df["categoria"] == categoria].iloc[0].to_dict()
+        energy_model = PigGrowEnergy(params, unidad_energia)
+        ME_total = energy_model.me_total(PV, ADG, f_P, f_G, T_amb)
+        ME_total_disp = energy_unit_convert(ME_total, "kcal", unidad_energia)
+        if FI > 0:
+            AME_requerida = ME_total / FI
+        else:
+            AME_requerida = AME_dieta
+        AME_requerida_disp = energy_unit_convert(AME_requerida, "kcal", unidad_energia)
+        nutr_stage = nutrients_df[(nutrients_df["especie"] == "broiler") & (nutrients_df["etapa"] == "engorde")]
+        scaled_nutr = scale_nutrients(nutr_stage, AME_requerida)
+        csv_out = scaled_nutr.to_csv(index=False).encode()
 
     elif especie == "Aves" and etapa == "Broiler":
-        with st.container():
-            st.markdown('<div class="param-card">', unsafe_allow_html=True)
-            st.subheader("Parámetros productivos - Broiler")
-            broiler_params_df = pd.read_csv("params/broiler.csv")
-            nutrients_df = pd.read_csv(archivo_req)
-            genetica = st.selectbox("Genética", broiler_params_df["genetica"].unique(), key="genetica_broiler")
-            W = st.number_input("Peso vivo (kg)", min_value=0.1, value=2.0, step=0.01, key="w_broiler")
-            ADG = st.number_input("Ganancia diaria (g/d)", min_value=0.0, value=60.0, step=1.0, key="adg_broiler")
-            T_amb = st.number_input("Temperatura ambiente (°C)", min_value=0.0, value=22.0, key="tamb_broiler")
-            FI = st.number_input("Ingesta diaria (kg/d)", min_value=0.01, value=0.11, key="fi_broiler")
-            st.markdown('</div>', unsafe_allow_html=True)
-            # Placeholder lógica, implementar modelo real
-            # params = broiler_params_df[broiler_params_df["genetica"] == genetica].iloc[0].to_dict()
-            # energy_model = BroilerEnergy(params, unidad_energia)
-            # ME_total = energy_model.me_total(W, ADG, T_amb)
-            # ME_total_disp = energy_unit_convert(ME_total, "kcal", unidad_energia)
-            # if FI > 0:
-            #     AME_requerida = ME_total / FI
-            # else:
-            #     AME_requerida = 3000
-            # AME_requerida_disp = energy_unit_convert(AME_requerida, "kcal", unidad_energia)
-            # nutr_stage = nutrients_df[(nutrients_df["especie"] == "broiler") & (nutrients_df["etapa"] == "engorde")]
-            # scaled_nutr = scale_nutrients(nutr_stage, AME_requerida)
-            # csv_out = scaled_nutr.to_csv(index=False).encode()
+        st.markdown('<div class="card-box">', unsafe_allow_html=True)
+        st.subheader("Parámetros productivos - Broiler")
+        broiler_params_df = pd.read_csv("params/broiler.csv")
+        nutrients_df = pd.read_csv(archivo_req)
+        genetica = st.selectbox("Genética", broiler_params_df["genetica"].unique(), key="genetica_broiler")
+        W = st.number_input("Peso vivo (kg)", min_value=0.1, value=2.0, step=0.01, key="w_broiler")
+        ADG = st.number_input("Ganancia diaria (g/d)", min_value=0.0, value=60.0, step=1.0, key="adg_broiler")
+        T_amb = st.number_input("Temperatura ambiente (°C)", min_value=0.0, value=22.0, key="tamb_broiler")
+        FI = st.number_input("Ingesta diaria (kg/d)", min_value=0.01, value=0.11, key="fi_broiler")
+        st.markdown('</div>', unsafe_allow_html=True)
+        # Placeholder lógica, implementar modelo real
+        # params = broiler_params_df[broiler_params_df["genetica"] == genetica].iloc[0].to_dict()
+        # energy_model = BroilerEnergy(params, unidad_energia)
+        # ME_total = energy_model.me_total(W, ADG, T_amb)
+        # ME_total_disp = energy_unit_convert(ME_total, "kcal", unidad_energia)
+        # if FI > 0:
+        #     AME_requerida = ME_total / FI
+        # else:
+        #     AME_requerida = 3000
+        # AME_requerida_disp = energy_unit_convert(AME_requerida, "kcal", unidad_energia)
+        # nutr_stage = nutrients_df[(nutrients_df["especie"] == "broiler") & (nutrients_df["etapa"] == "engorde")]
+        # scaled_nutr = scale_nutrients(nutr_stage, AME_requerida)
+        # csv_out = scaled_nutr.to_csv(index=False).encode()
 
-st.divider()
+st.markdown('<hr>', unsafe_allow_html=True)
 
 # ==========================================
-# BLOQUE 5: CARDS DE RESULTADOS
+# BLOQUE 7: CARDS DE RESULTADOS
 # ==========================================
 if ME_total_disp is not None and AME_requerida_disp is not None and FI is not None:
-    st.markdown('<div class="param-card">', unsafe_allow_html=True)
+    st.markdown('<div class="card-box">', unsafe_allow_html=True)
     st.subheader("Resultados principales")
     col1, col2, col3 = st.columns(3)
     col1.metric(label="Energía total requerida", value=f"{ME_total_disp:.1f} {unidad_energia}/día")
@@ -244,17 +260,17 @@ if ME_total_disp is not None and AME_requerida_disp is not None and FI is not No
     st.markdown('</div>', unsafe_allow_html=True)
 
     # ==========================================
-    # BLOQUE 6: TABLA DE NUTRIENTES ESCALADOS
+    # BLOQUE 8: TABLA DE NUTRIENTES ESCALADOS
     # ==========================================
     if scaled_nutr is not None:
-        st.markdown('<div class="param-card">', unsafe_allow_html=True)
+        st.markdown('<div class="card-box">', unsafe_allow_html=True)
         st.subheader("Nutrientes escalados por kg de dieta")
         st.dataframe(scaled_nutr[["nutriente", "valor_por_kg", "unidad"]], use_container_width=True)
         st.download_button("Descargar CSV", data=csv_out, file_name="nutrientes_escalados.csv")
         st.markdown('</div>', unsafe_allow_html=True)
 
     # ==========================================
-    # BLOQUE 7: GRÁFICO DE SENSIBILIDAD (OPCIONAL)
+    # BLOQUE 9: GRÁFICO DE SENSIBILIDAD (OPCIONAL)
     # ==========================================
     with st.expander("Mostrar sensibilidad de AME requerida vs FI"):
         fi_range = [x/10 for x in range(10, 40)]
@@ -270,7 +286,7 @@ if ME_total_disp is not None and AME_requerida_disp is not None and FI is not No
         st.plotly_chart(fig, use_container_width=True)
 
     # ==========================================
-    # BLOQUE 8: VALIDACIONES Y MENSAJES
+    # BLOQUE 10: VALIDACIONES Y MENSAJES
     # ==========================================
     if AME_requerida_disp > 3600 and isinstance(AME_requerida_disp, (int, float)):
         st.warning("AME requerida excede el rango típico para esta etapa. Revisar parámetros o FI.")
@@ -278,14 +294,10 @@ if ME_total_disp is not None and AME_requerida_disp is not None and FI is not No
         st.warning("La FI es muy baja para esta etapa. Revisar.")
 
 # ==========================================
-# BLOQUE 9: FOOTER Y CRÉDITOS
+# BLOQUE 11: FOOTER Y CRÉDITOS
 # ==========================================
 st.markdown("""
-<div style="text-align:center;color:gray;font-size:0.95em;margin-top:32px;font-family:Montserrat,Arial;">
+<div style="text-align:center;color:gray;font-size:0.97em;margin-top:40px;font-family:Montserrat,Arial;">
     <em>App de modelado nutricional - v1.0 | Uywa | Todos los coeficientes y reglas calibrables en <code>params/</code></em>
 </div>
 """, unsafe_allow_html=True)
-
-# ==========================================
-# FIN DEL APP.PY
-# ==========================================
