@@ -8,7 +8,7 @@ from models.scale import scale_nutrients
 from helpers import energy_unit_convert
 from auth import USERS_DB
 
-# ==== NUEVO: Importar módulos para la pestaña de energía de materias primas ====
+# ==== Importar módulos para energía de materias primas (solo CERDOS) ====
 from core.ingredients import IngredientInput, get_ingredient_defaults, load_ingredients_map
 from core.selector import select_equation, list_applicable_equations
 from core.equations import compute_energy
@@ -153,16 +153,16 @@ tabs = st.tabs([
     "Energía de materias primas"
 ])
 
-# ========== PESTAÑA 1: MODELO DE REQUERIMIENTOS ==========
+# ========== PESTAÑA 1: MODELO DE REQUERIMIENTOS CERDOS ==========
 with tabs[0]:
     st.markdown(f"""
     <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
       <div>
         <div class="main-title" style="margin-bottom:0.25em; font-size:1.35em;">
-          Modelador de Requerimientos Energéticos y Dietarios
+          Modelador de Requerimientos Energéticos y Dietarios para CERDOS
         </div>
         <div class="subtitle" style="font-size:1.05em;">
-          Calcula energía total, densidad energética y tabla de nutrientes ajustada por etapa y especie.
+          Calcula energía total, densidad energética y tabla de nutrientes ajustada por etapa y categoría.
         </div>
       </div>
       <div style="font-size:1em; color:#233a61;">Usuario: <b>{st.session_state['usuario']}</b></div>
@@ -174,14 +174,8 @@ with tabs[0]:
 
     with col1:
         st.markdown('<div class="card-box">', unsafe_allow_html=True)
-        st.markdown('<div class="main-title" style="font-size:1.18em; margin-bottom:0.35em;">1. Seleccione especie y etapa</div>', unsafe_allow_html=True)
-        especie = st.selectbox("Especie", ["Porcinos", "Aves"], key="especie_main")
-        if especie == "Porcinos":
-            etapa = st.selectbox("Categoría", ["Crecimiento/Cebo", "Gestación", "Lactación"], key="etapa_porcino")
-        elif especie == "Aves":
-            etapa = st.selectbox("Categoría", ["Broiler", "Ponedora"], key="etapa_ave")
-        else:
-            etapa = None
+        st.markdown('<div class="main-title" style="font-size:1.18em; margin-bottom:0.35em;">1. Seleccione categoría y etapa</div>', unsafe_allow_html=True)
+        etapa = st.selectbox("Categoría", ["Crecimiento/Cebo", "Gestación", "Lactación"], key="etapa_porcino")
         st.markdown('</div>', unsafe_allow_html=True)
 
     with col2:
@@ -201,7 +195,7 @@ with tabs[0]:
     scaled_nutr = None
     csv_out = None
 
-    if especie == "Porcinos" and etapa == "Crecimiento/Cebo":
+    if etapa == "Crecimiento/Cebo":
         st.markdown('<div class="main-title" style="font-size:1.12em; margin-bottom:0.3em;">Parámetros productivos - Crecimiento/Cebo</div>', unsafe_allow_html=True)
         pig_grow_df = pd.read_csv("params/pig_grow.csv")
         nutrients_df = pd.read_csv(archivo_req)
@@ -246,17 +240,6 @@ with tabs[0]:
         energia_ref = nutr_stage["referencia_AME_kcalkg"].iloc[0]
         st.caption(f"Energía estándar de referencia para la etapa: {energia_ref} kcal/kg")
 
-    elif especie == "Aves" and etapa == "Broiler":
-        st.markdown('<div class="main-title" style="font-size:1.12em; margin-bottom:0.3em;">Parámetros productivos - Broiler</div>', unsafe_allow_html=True)
-        broiler_params_df = pd.read_csv("params/broiler.csv")
-        nutrients_df = pd.read_csv(archivo_req)
-        genetica = st.selectbox("Genética", broiler_params_df["genetica"].unique(), key="genetica_broiler")
-        W = st.number_input("Peso vivo (kg)", min_value=0.1, value=2.0, step=0.01, key="w_broiler")
-        ADG = st.number_input("Ganancia diaria (g/d)", min_value=0.0, value=60.0, step=1.0, key="adg_broiler")
-        T_amb = st.number_input("Temperatura ambiente (°C)", min_value=0.0, value=22.0, key="tamb_broiler")
-        FI = st.number_input("Ingesta diaria (kg/d)", min_value=0.01, value=0.11, key="fi_broiler")
-        # Placeholder lógica, implementar modelo real
-
     st.markdown('<hr>', unsafe_allow_html=True)
 
     if ME_total_disp is not None and AME_requerida_disp is not None and FI is not None:
@@ -299,16 +282,16 @@ with tabs[0]:
     </div>
     """, unsafe_allow_html=True)
 
-# ========== PESTAÑA 2: ENERGÍA DE MATERIAS PRIMAS ==========
+# ========== PESTAÑA 2: ENERGÍA DE MATERIAS PRIMAS CERDOS ==========
 with tabs[1]:
     st.markdown(f"""
     <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
       <div>
         <div class="main-title" style="margin-bottom:0.25em; font-size:1.35em;">
-          Estimador y Ajustador Energético de Materias Primas
+          Estimador y Ajustador Energético de Materias Primas para CERDOS
         </div>
         <div class="subtitle" style="font-size:1.05em;">
-          Calcula el valor energético estimado de ingredientes para aves (MEn) y cerdos (ME/NE), con ajuste de nutrientes por kg de dieta.
+          Calcula el valor energético estimado de ingredientes para cerdos (ME/NE), con ajuste de nutrientes por kg de dieta.
         </div>
       </div>
       <div style="font-size:1em; color:#233a61;">Usuario: <b>{st.session_state['usuario']}</b></div>
@@ -316,7 +299,7 @@ with tabs[1]:
     <hr style="border-top:2px solid #dde7f7; margin: 18px 0 20px 0;">
     """, unsafe_allow_html=True)
 
-    # ------ BLOQUE 2.1: Selección de especie y materia prima ------
+    # ------ BLOQUE 2.1: Selección de materia prima ------
     st.markdown('<div class="card-box">', unsafe_allow_html=True)
     colmp1, colmp2, colmp3 = st.columns([1,1.2,1])
     # Cargar el mapa de ingredientes (solo una vez)
@@ -324,7 +307,6 @@ with tabs[1]:
         st.session_state["ingredients_map"] = load_ingredients_map("data/ingredients_map.csv")
     ingredients_map = st.session_state["ingredients_map"]
     with colmp1:
-        especie_mp = st.selectbox("Especie", ["Aves", "Cerdos"], key="especie_mp")
         unidad_energia_mp = st.radio("Unidad de energía", ["kcal/kg", "MJ/kg"], horizontal=True, key="unidad_energia_mp")
         unidad_base_mp = st.radio("Base análisis", ["MS", "as-fed"], horizontal=True, key="unidad_base_mp")
     with colmp2:
@@ -345,20 +327,19 @@ with tabs[1]:
         comp_df = pd.read_csv(uploaded)
         st.session_state["data_upload"] = comp_df
     else:
-        defaults = get_ingredient_defaults(materia_prima, familia, especie_mp)
+        defaults = get_ingredient_defaults(materia_prima, familia, "Cerdos")
         comp_df = pd.DataFrame([defaults])
     comp_edit = st.data_editor(comp_df, num_rows="fixed", key="edit_comp")
 
     # ------ BLOQUE 2.3: Selección de ecuación ------
     st.subheader("Selección de ecuación energética")
     eq_mode = st.radio("Modo de selección de ecuación", ["Automática", "Manual"], key="modo_ecuacion_mp")
-    available_eqs = list_applicable_equations(especie_mp, familia, comp_edit)
+    available_eqs = list_applicable_equations("Cerdos", familia, comp_edit)
     if eq_mode == "Manual":
         eq_choice = st.selectbox("Ecuación (manual)", available_eqs, key="ec_manual_mp")
-        # Aquí podrías mostrar requisitos de entrada de la ecuación seleccionada
         st.info(f"Requiere: {available_eqs[0] if isinstance(available_eqs, list) and available_eqs else 'N/A'}")
     else:
-        eq_choice = select_equation(especie_mp, familia, comp_edit)
+        eq_choice = select_equation("Cerdos", familia, comp_edit)
         st.info(f"Ecuación seleccionada automáticamente: {eq_choice}")
 
 # ========================
@@ -372,11 +353,9 @@ for col in comp_edit.columns:
     try:
         val = float(comp_edit.iloc[0][col])
         # --- CORRECCIÓN DE UNIDADES ---
-        # Si el valor está entre 0 y 1000 y la columna corresponde a un nutriente principal en %, multiplica por 10.
-        # Esto es típico en tablas NRC: CP, EE, Ash, CF, NDF, ADF, Starch, Sugars, etc.
         if col in ["Ash", "CP", "EE", "CF", "NDF", "ADF", "Starch", "Sugars", "GE"]:
-            if val is not None and val <= 100:  # asume que está en %
-                val = val * 10  # convierte a g/kg MS
+            if val is not None and val <= 100:
+                val = val * 10
     except Exception:
         val = None
     inputs_dict[col] = val
@@ -399,7 +378,7 @@ if eq_mode == "Manual":
 
 try:
     result = compute_energy(
-        species="poultry" if especie_mp == "Aves" else "swine",
+        species="swine",
         family=familia,
         method=method_name,
         inputs=inputs_dict,
@@ -418,7 +397,7 @@ try:
         st.warning(" | ".join(advertencias))
 except Exception as e:
     st.error(f"Error en el cálculo energético: {e}")
-    
+
     # ------ BLOQUE 2.5: Ajuste a dieta y escalado de nutrientes ------
     st.subheader("Ajuste a dieta y escalado de nutrientes")
     FI_mp = st.number_input("Consumo diario orientativo (kg/d)", min_value=0.01, value=1.0, key="fi_mp")
@@ -447,6 +426,6 @@ except Exception as e:
 # ========================
 st.markdown("""
 <div style="text-align:center;color:gray;font-size:0.97em;margin-top:40px;font-family:Montserrat,Arial;">
-    <em>App de modelado nutricional - v1.0 | Uywa | Todos los coeficientes y reglas calibrables en <code>params/</code> y <code>requirements/</code></em>
+    <em>App de modelado nutricional exclusiva para CERDOS - v1.0 | Uywa | Todos los coeficientes y reglas calibrables en <code>params/</code> y <code>requirements/</code></em>
 </div>
 """, unsafe_allow_html=True)
