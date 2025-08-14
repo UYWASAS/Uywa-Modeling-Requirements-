@@ -50,5 +50,3 @@ class PigGrowEnergy:
         me_act = 0
         total = me_mto + me_term + me_act + me_crec
         return total
-
-# Implementar otras clases: SowGestationEnergy, SowLactationEnergy, BroilerEnergy, LayerEnergy, con firmas similares.
